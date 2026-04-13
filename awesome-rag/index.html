@@ -753,14 +753,7 @@ const readingPath = [
 
 let activeFilter='all', activeSort='default';
 
-function thumbColor(tags){ return thumbColor_map[tags[0]]||'#8b949e'; }
-
-const thumbColor_map = {
-  research:'#58a6ff', framework:'#bc8cff', database:'#3fb950',
-  evaluation:'#e3b341', technique:'#39d1c7', tutorial:'#f47067'
-};
-
-function getThumbColor(tags){ return thumbColor_map[tags[0]]||'#8b949e'; }
+function getThumbColor(tags){ return thumbColor[tags[0]]||'#8b949e'; }
 
 function buildCard(p, i){
   const isNew = p.year && p.year >= 2025;
