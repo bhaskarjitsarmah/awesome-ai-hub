@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Awesome RAG</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Segoe UI',sans-serif;background:#0d1117;color:#e6edf3;min-height:100vh}
+    header{text-align:center;padding:46px 20px 26px;border-bottom:1px solid #21262d}
+    header a.back{display:inline-block;margin-bottom:16px;color:#58a6ff;text-decoration:none;font-size:.9rem}
+    header a.back:hover{text-decoration:underline}
+    header h1{font-size:2.3rem;background:linear-gradient(90deg,#f97316,#58a6ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}
+    header p{color:#8b949e;font-size:.95rem;max-width:640px;margin:0 auto}
+    .stats{display:flex;justify-content:center;gap:24px;padding:14px;font-size:.83rem;color:#8b949e;flex-wrap:wrap}
+    .stats b{color:#e6edf3}
+    .controls{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;padding:12px 20px 0}
+    .controls input{padding:8px 14px;border-radius:8px;border:1px solid #30363d;background:#161b22;color:#e6edf3;font-size:.92rem;width:300px;outline:none}
+    .controls input:focus{border-color:#f97316}
+    .sort-bar{display:flex;justify-content:center;align-items:center;gap:8px;padding:10px 20px 0;flex-wrap:wrap}
+    .sort-bar span{font-size:.8rem;color:#8b949e}
+    .sort-btn{padding:4px 12px;border-radius:20px;border:1px solid #30363d;background:transparent;color:#8b949e;cursor:pointer;font-size:.78rem;transition:all .2s}
+    .sort-btn.active,.sort-btn:hover{background:#2a1f0f;color:#f97316;border-color:#f97316}
+    .filters{display:flex;justify-content:center;gap:7px;flex-wrap:wrap;padding:12px 20px 0}
+    .filter-btn{padding:4px 13px;border-radius:20px;border:1px solid #30363d;background:transparent;color:#8b949e;cursor:pointer;font-size:.79rem;transition:all .2s}
+    .filter-btn.active,.filter-btn:hover{background:#2a1f0f;color:#f97316;border-color:#f97316}
+    /* Reading path toggle */
+    .path-toggle{display:flex;justify-content:center;padding:10px 20px 0}
+    .path-btn{padding:6px 16px;border-radius:8px;border:1px solid #58a6ff;background:transparent;color:#58a6ff;cursor:pointer;font-size:.82rem;transition:all .2s}
+    .path-btn.active{background:#1f3a5f;color:#58a6ff}
+    .reading-path{display:none;max-width:700px;margin:16px auto 0;background:#161b22;border:1px solid #58a6ff66;border-radius:12px;padding:20px}
+    .reading-path.visible{display:block}
+    .reading-path h3{color:#58a6ff;font-size:.95rem;margin-bottom:14px}
+    .path-step{display:flex;gap:12px;align-items:flex-start;margin-bottom:12px}
+    .path-num{background:#1f3a5f;color:#58a6ff;font-size:.75rem;font-weight:700;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+    .path-step a{color:#e6edf3;text-decoration:none;font-size:.85rem;font-weight:600}
+    .path-step a:hover{color:#f97316}
+    .path-note{font-size:.75rem;color:#8b949e;margin-top:2px}
+    /* Grid */
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:15px;padding:20px 32px;max-width:1400px;margin:0 auto}
+    /* Card */
+    .card{background:#161b22;border:1px solid #21262d;border-radius:10px;overflow:hidden;transition:border-color .2s,transform .2s;display:flex;flex-direction:column}
+    .card:hover{border-color:#f97316;transform:translateY(-2px)}
+    .card-thumb{height:5px}
+    .card-body{padding:14px;flex:1;display:flex;flex-direction:column;gap:8px}
+    .card-row1{display:flex;justify-content:space-between;align-items:center;gap:6px;flex-wrap:wrap}
+    .badge-new{font-size:.68rem;padding:2px 7px;border-radius:20px;background:#2a1f0f;color:#f97316;font-weight:700;border:1px solid #f97316}
+    .badge-type{font-size:.68rem;padding:2px 7px;border-radius:20px;font-weight:600}
+    /* Type badge colors */
+    .type-paper{background:#1f3a5f;color:#58a6ff}
+    .type-framework{background:#2a1a3a;color:#bc8cff}
+    .type-database{background:#1a3a2a;color:#3fb950}
+    .type-eval{background:#3a2a1a;color:#e3b341}
+    .type-technique{background:#1a2a3a;color:#39d1c7}
+    .type-tutorial{background:#3a1a2a;color:#f47067}
+    .type-managed{background:#21262d;color:#8b949e}
+    /* Method badge */
+    .badge-method{font-size:.68rem;padding:2px 7px;border-radius:20px;font-weight:600}
+    .method-corrective{background:#1f3a5f;color:#58a6ff}
+    .method-agentic{background:#2a1a3a;color:#bc8cff}
+    .method-graphbased{background:#1a3a2a;color:#3fb950}
+    .method-finetuned{background:#3a2a1a;color:#e3b341}
+    .method-multimodal{background:#1a2a3a;color:#39d1c7}
+    .method-fusion{background:#3a1a2a;color:#f47067}
+    .method-selfreflective{background:#1f3a5f;color:#79c0ff}
+    .method-active{background:#2a2a1a;color:#d2a679}
+    .method-adaptive{background:#1a3a3a;color:#56d7c9}
+    .method-compression{background:#21262d;color:#8b949e}
+    .method-framework{background:#2a1a3a;color:#bc8cff}
+    .method-opensource{background:#1a3a2a;color:#3fb950}
+    .method-manageddb{background:#21262d;color:#8b949e}
+    .method-evaltool{background:#3a2a1a;color:#e3b341}
+    .method-managedtool{background:#21262d;color:#8b949e}
+    .method-chunking{background:#1a2a3a;color:#39d1c7}
+    .method-retrieval{background:#1a2a3a;color:#79c0ff}
+    .method-prompting{background:#2a1a3a;color:#bc8cff}
+    .method-dataprep{background:#21262d;color:#8b949e}
+    .method-tutorial{background:#3a1a2a;color:#f47067}
+    .venue-year{font-size:.72rem;color:#8b949e}
+    .card-tags{display:flex;gap:5px;flex-wrap:wrap}
+    .tag{font-size:.68rem;padding:2px 7px;border-radius:20px;font-weight:500}
+    .tag-research{background:#1f3a5f;color:#58a6ff}
+    .tag-framework{background:#2a1a3a;color:#bc8cff}
+    .tag-database{background:#1a3a2a;color:#3fb950}
+    .tag-evaluation{background:#3a2a1a;color:#e3b341}
+    .tag-technique{background:#1a2a3a;color:#39d1c7}
+    .tag-tutorial{background:#3a1a2a;color:#f47067}
+    .card-title{font-size:.9rem;font-weight:600;color:#e6edf3;text-decoration:none;line-height:1.4}
+    .card-title:hover{color:#f97316}
+    .card-desc{font-size:.8rem;color:#8b949e;line-height:1.5;flex:1}
+    .chip-row{display:flex;gap:5px;flex-wrap:wrap}
+    .chip{font-size:.67rem;padding:2px 7px;border-radius:4px;background:#0d1117;border:1px solid #30363d;color:#8b949e}
+    .chip-task{border-color:#f9731655;color:#f97316}
+    .chip-dataset{border-color:#58a6ff55;color:#58a6ff}
+    .card-footer{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:4px;padding-top:8px;border-top:1px solid #21262d}
+    .citations{font-size:.75rem;color:#8b949e;display:flex;align-items:center;gap:4px}
+    .citations svg{opacity:.6}
+    .card-links{display:flex;gap:6px}
+    .btn-link{font-size:.72rem;padding:3px 9px;border-radius:6px;text-decoration:none;display:flex;align-items:center;gap:4px;transition:all .2s}
+    .btn-paper{background:#1f3a5f;color:#58a6ff;border:1px solid #58a6ff55}
+    .btn-paper:hover{background:#2a4a6f;color:#79c0ff}
+    .btn-code{background:#1a3a2a;color:#3fb950;border:1px solid #3fb95055}
+    .btn-code:hover{background:#2a4a3a}
+    .oss-dot{width:7px;height:7px;border-radius:50%;background:#3fb950;display:inline-block;margin-left:2px;flex-shrink:0}
+    .related{font-size:.75rem;color:#8b949e;margin-top:2px}
+    .related span{color:#58a6ff;cursor:pointer}
+    .related span:hover{text-decoration:underline}
+    .no-results{text-align:center;color:#8b949e;padding:60px 20px;display:none}
+    footer{text-align:center;padding:32px 20px;color:#8b949e;font-size:.83rem;border-top:1px solid #21262d;margin-top:20px}
+    footer a{color:#58a6ff;text-decoration:none}
+  </style>
+</head>
+<body>
+
+<header>
+  <a class="back" href="../">← Back to Awesome AI Hub</a>
+  <h1>Awesome RAG</h1>
+  <p>Complete curated list of RAG resources — research papers, frameworks, vector databases, evaluation tools, techniques, and hands-on tutorials.</p>
+</header>
+
+<div class="stats">
+  <div><b id="visible-count">0</b> resources shown</div>
+  <div><b id="oss-count">0</b> open source</div>
+  <div>Source: <a href="https://github.com/Danielskry/Awesome-RAG" target="_blank" style="color:#58a6ff">Danielskry/Awesome-RAG</a></div>
+</div>
+
+<div class="controls">
+  <input type="text" id="search" placeholder="Search resources, methods, tools..." oninput="applyFilters()"/>
+</div>
+
+<div class="sort-bar">
+  <span>Sort by:</span>
+  <button class="sort-btn active" onclick="setSort('default',this)">Default</button>
+  <button class="sort-btn" onclick="setSort('year',this)">Newest First</button>
+  <button class="sort-btn" onclick="setSort('citations',this)">Most Cited / Starred</button>
+  <button class="sort-btn" onclick="setSort('alpha',this)">A–Z</button>
+</div>
+
+<div class="filters">
+  <button class="filter-btn active" onclick="setFilter('all',this)">All</button>
+  <button class="filter-btn" onclick="setFilter('research',this)">Research Papers</button>
+  <button class="filter-btn" onclick="setFilter('framework',this)">Frameworks</button>
+  <button class="filter-btn" onclick="setFilter('database',this)">Vector DBs</button>
+  <button class="filter-btn" onclick="setFilter('evaluation',this)">Evaluation</button>
+  <button class="filter-btn" onclick="setFilter('technique',this)">Techniques</button>
+  <button class="filter-btn" onclick="setFilter('tutorial',this)">Tutorials</button>
+  <button class="filter-btn" onclick="setFilter('oss',this)">⬤ Open Source</button>
+</div>
+
+<div class="path-toggle">
+  <button class="path-btn" onclick="togglePath(this)">★ Show Learning Path for RAG Beginners</button>
+</div>
+
+<div class="reading-path" id="reading-path">
+  <h3>★ Recommended Learning Path for RAG Beginners</h3>
+  <div id="path-steps"></div>
+</div>
+
+<div class="grid" id="card-grid"></div>
+<div class="no-results" id="no-results">No resources found matching your search.</div>
+
+<footer>
+  Source: <a href="https://github.com/Danielskry/Awesome-RAG" target="_blank">Danielskry/Awesome-RAG</a> &middot;
+  <a href="https://github.com/bhaskarjitsarmah/awesome-ai-hub" target="_blank">View on GitHub</a>
+</footer>
+
+<script>
+const thumbColor = {
+  research:'#58a6ff', framework:'#bc8cff', database:'#3fb950',
+  evaluation:'#e3b341', technique:'#39d1c7', tutorial:'#f47067'
+};
+const tagLabel = {
+  research:'Research', framework:'Framework', database:'Vector DB',
+  evaluation:'Evaluation', technique:'Technique', tutorial:'Tutorial'
+};
+const typeClass = {
+  'Paper':'type-paper','Framework':'type-framework','Vector DB':'type-database',
+  'Eval Tool':'type-eval','Technique':'type-technique','Tutorial':'type-tutorial',
+  'Managed DB':'type-managed','Managed Tool':'type-managed'
+};
+const methodCls = {
+  'Corrective':'method-corrective','Agentic':'method-agentic','Graph-based':'method-graphbased',
+  'Fine-tuned':'method-finetuned','Multimodal':'method-multimodal','Fusion':'method-fusion',
+  'Self-Reflective':'method-selfreflective','Active Retrieval':'method-active',
+  'Adaptive':'method-adaptive','Compression':'method-compression','Framework':'method-framework',
+  'Open Source':'method-opensource','Managed DB':'method-manageddb','Eval Tool':'method-evaltool',
+  'Managed Tool':'method-managedtool','Chunking':'method-chunking','Retrieval':'method-retrieval',
+  'Prompting':'method-prompting','Data Prep':'method-dataprep','Tutorial':'method-tutorial',
+  'Survey':'method-framework'
+};
+
+const resources = [
+  // ── RESEARCH PAPERS ──
+  {type:'Paper',tags:['research'],year:2023,venue:'arXiv 2023',
+   title:'Self-RAG: Learning to Retrieve, Generate and Critique',
+   url:'https://arxiv.org/abs/2310.11511',
+   repo:'https://github.com/AkariAsai/self-rag',
+   desc:'Trains LLMs to dynamically decide when to retrieve, evaluate retrieved passages via special reflection tokens, and critique their own output for factual grounding.',
+   citations:1800,method:'Self-Reflective',tasks:['Open-domain QA','Fact Verification','Summarization'],datasets:['PopQA','ASQA','Biography'],related:['Corrective Retrieval Augmented Generation (CRAG)','FLARE: Active Retrieval Augmented Generation']},
+
+  {type:'Paper',tags:['research'],year:2023,venue:'ACL 2023',
+   title:'FLARE: Active Retrieval Augmented Generation',
+   url:'https://arxiv.org/abs/2305.06983',
+   repo:'https://github.com/jzbjyb/FLARE',
+   desc:'Forward-looking active retrieval — model predicts upcoming content and retrieves supporting documents only when confidence drops below a threshold, reducing unnecessary lookups.',
+   citations:600,method:'Active Retrieval',tasks:['Long-form QA','Summarization'],datasets:['ASQA','2WikiMultihopQA'],related:['Self-RAG: Learning to Retrieve, Generate and Critique','Corrective Retrieval Augmented Generation (CRAG)']},
+
+  {type:'Paper',tags:['research'],year:2024,venue:'arXiv 2024',
+   title:'Corrective Retrieval Augmented Generation (CRAG)',
+   url:'https://arxiv.org/abs/2401.15884',
+   repo:null,
+   desc:'Introduces a lightweight retrieval evaluator that assesses retrieved documents and applies corrective actions — refine, discard, or fall back to web search — to improve RAG accuracy.',
+   citations:800,method:'Corrective',tasks:['Open-domain QA','Fact Verification'],datasets:['PopQA','PubHealth','Biography'],related:['Self-RAG: Learning to Retrieve, Generate and Critique','RAG Fusion']},
+
+  {type:'Paper',tags:['research'],year:2024,venue:'arXiv 2024',
+   title:'RAG Fusion',
+   url:'https://arxiv.org/abs/2402.03367',
+   repo:null,
+   desc:'Generates multiple query variants from the user query, retrieves for each, then combines results via reciprocal rank fusion for more comprehensive and diverse retrieval coverage.',
+   citations:400,method:'Fusion',tasks:['Open-domain QA'],datasets:[],related:['Corrective Retrieval Augmented Generation (CRAG)','HyDE: Hypothetical Document Embeddings']},
+
+  {type:'Paper',tags:['research'],year:2024,venue:'arXiv 2024',
+   title:'PlanRAG: A Plan-then-Retrieval Augmented Generation for Reasoning',
+   url:'https://arxiv.org/abs/2406.12430',
+   repo:null,
+   desc:'Separates planning from retrieval — the LLM first generates an explicit retrieval plan, then executes targeted step-by-step retrieval, then generates the final answer.',
+   citations:200,method:'Agentic',tasks:['Multi-hop QA','Decision Making'],datasets:[],related:['Agentic RAG with LangGraph','A-RAG: Adaptive Retrieval-Augmented Generation']},
+
+  {type:'Paper',tags:['research'],year:2024,venue:'Microsoft Blog 2024',
+   title:'RAFT: Retrieval Augmented Fine-Tuning',
+   url:'https://techcommunity.microsoft.com/t5/ai-ai-platform-blog/raft-a-new-way-to-teach-llms-to-be-better-at-rag/ba-p/4084674',
+   repo:null,
+   desc:'Fine-tuning strategy that teaches LLMs to identify relevant documents within retrieved context while ignoring distractor documents, improving domain-specific RAG accuracy.',
+   citations:500,method:'Fine-tuned',tasks:['Domain QA'],datasets:[],related:['InstructRAG']},
+
+  {type:'Paper',tags:['research'],year:2024,venue:'arXiv 2024',
+   title:'InstructRAG',
+   url:'https://arxiv.org/abs/2408.11765',
+   repo:'https://github.com/weizhepei/InstructRAG',
+   desc:'Augments RAG with self-synthesized rationales explaining how to reason over retrieved context, then uses these as instruction-tuning data to train more reliable RAG models.',
+   citations:150,method:'Fine-tuned',tasks:['Open-domain QA'],datasets:['Natural Questions','TriviaQA'],related:['RAFT: Retrieval Augmented Fine-Tuning']},
+
+  {type:'Paper',tags:['research'],year:2024,venue:'arXiv 2024',
+   title:'GNN-RAG: Graph Neural Retrieval for Large Language Model Reasoning',
+   url:'https://arxiv.org/abs/2406.15200',
+   repo:'https://github.com/cmavro/GNN-RAG',
+   desc:'Uses Graph Neural Networks to retrieve and score reasoning paths from knowledge graphs, then fuses those paths with LLM generation for grounded multi-hop reasoning.',
+   citations:180,method:'Graph-based',tasks:['Multi-hop QA','KGQA'],datasets:['WebQSP','CWQ'],related:['GraphRAG (Microsoft)']},
+
+  {type:'Paper',tags:['research'],year:2024,venue:'GitHub 2024',
+   title:'GraphRAG (Microsoft)',
+   url:'https://microsoft.github.io/graphrag',
+   repo:'https://github.com/microsoft/graphrag',
+   desc:'Builds a knowledge graph from source documents using community detection, then answers global queries via community summarization — ideal for complex, analytical queries.',
+   citations:3500,method:'Graph-based',tasks:['Global QA','Summarization'],datasets:['UltraDomain'],related:['GNN-RAG: Graph Neural Retrieval for Large Language Model Reasoning']},
+
+  {type:'Paper',tags:['research'],year:2024,venue:'GitHub 2024',
+   title:'Code-Graph-RAG',
+   url:'https://github.com/vitali87/code-graph-rag',
+   repo:'https://github.com/vitali87/code-graph-rag',
+   desc:'RAG system for multi-language codebases using graph representations of code structure, dependencies, and call graphs. Enables accurate developer Q&A and code search.',
+   citations:null,method:'Graph-based',tasks:['Code QA','Code Search'],datasets:[],related:['GraphRAG (Microsoft)']},
+
+  {type:'Paper',tags:['research'],year:2024,venue:'NVIDIA Blog 2024',
+   title:'Multimodal RAG: Text, Images, and Audio',
+   url:'https://developer.nvidia.com/blog/an-easy-introduction-to-multimodal-retrieval-augmented-generation/',
+   repo:null,
+   desc:'Comprehensive overview of multimodal RAG pipelines that retrieve and reason over text, images, and audio modalities using vision-language and audio-language models.',
+   citations:null,method:'Multimodal',tasks:['Visual QA','Multimodal Generation'],datasets:[],related:['VideoRAG']},
+
+  {type:'Paper',tags:['research'],year:2025,venue:'arXiv 2025',
+   title:'VideoRAG: Retrieval-Augmented Generation over Video Corpus',
+   url:'https://arxiv.org/abs/2501.05874',
+   repo:null,
+   desc:'Extends RAG to video corpora using Large Video Language Models (LVLMs). Retrieves relevant video segments and generates answers grounded in rich multimodal video content.',
+   citations:80,method:'Multimodal',tasks:['Video QA','Summarization'],datasets:[],related:['Multimodal RAG: Text, Images, and Audio']},
+
+  {type:'Paper',tags:['research'],year:2025,venue:'arXiv 2025',
+   title:'REFRAG: Refusal-Free RAG via Context Compression',
+   url:'https://arxiv.org/abs/2509.01092',
+   repo:null,
+   desc:'Compresses retrieved context into compact latent embeddings to reduce safety-alignment refusal rates while preserving information quality in RAG pipelines.',
+   citations:10,method:'Compression',tasks:['Open-domain QA'],datasets:[],related:['Corrective Retrieval Augmented Generation (CRAG)']},
+
+  {type:'Paper',tags:['research'],year:2026,venue:'arXiv 2026',
+   title:'A-RAG: Adaptive Retrieval-Augmented Generation',
+   url:'https://arxiv.org/abs/2602.03442',
+   repo:'https://github.com/Ayanami0730/arag',
+   desc:'Performs hierarchical adaptive retrieval at multiple granularities — document, passage, and sentence levels — dynamically selecting the right depth for each query.',
+   citations:30,method:'Adaptive',tasks:['Multi-hop QA'],datasets:[],related:['PlanRAG: A Plan-then-Retrieval Augmented Generation for Reasoning']},
+
+  // ── FRAMEWORKS ──
+  {type:'Framework',tags:['framework'],year:2024,venue:'GitHub',
+   title:'LangChain',
+   url:'https://langchain.com',
+   repo:'https://github.com/langchain-ai/langchain',
+   desc:'The most widely used LLM application framework. Supports RAG via document loaders, vector store integrations, retriever abstractions, and composable LCEL chains.',
+   citations:95000,method:'Framework',tasks:[],datasets:[],related:['LlamaIndex','Haystack']},
+
+  {type:'Framework',tags:['framework'],year:2024,venue:'GitHub',
+   title:'LlamaIndex',
+   url:'https://llamaindex.ai',
+   repo:'https://github.com/run-llama/llama_index',
+   desc:'Data framework specialized for LLM-powered applications. 160+ data source connectors, advanced indexing strategies (tree, keyword, vector), and query engine abstractions.',
+   citations:37000,method:'Framework',tasks:[],datasets:[],related:['LangChain','Haystack']},
+
+  {type:'Framework',tags:['framework'],year:2024,venue:'GitHub',
+   title:'Haystack',
+   url:'https://haystack.deepset.ai',
+   repo:'https://github.com/deepset-ai/haystack',
+   desc:'Production-ready NLP and RAG framework. Modular pipeline components for indexing, retrieval, and generation with 60+ integrations and strong enterprise support.',
+   citations:18000,method:'Framework',tasks:[],datasets:[],related:['LangChain','LlamaIndex']},
+
+  {type:'Framework',tags:['framework'],year:2024,venue:'GitHub',
+   title:'Dify',
+   url:'https://dify.ai',
+   repo:'https://github.com/langgenius/dify',
+   desc:'Open-source LLM app platform with a visual workflow builder, RAG pipeline support, built-in model management, and a complete API backend. Ships with an enterprise UI.',
+   citations:52000,method:'Framework',tasks:[],datasets:[],related:['Flowise']},
+
+  {type:'Framework',tags:['framework'],year:2024,venue:'GitHub',
+   title:'Semantic Kernel',
+   url:'https://learn.microsoft.com/en-us/semantic-kernel',
+   repo:'https://github.com/microsoft/semantic-kernel',
+   desc:'Microsoft\'s SDK for integrating LLMs into applications in Python, C#, and Java. Supports RAG with memory plugins, skill composition, and planner integration.',
+   citations:22000,method:'Framework',tasks:[],datasets:[],related:['LangChain']},
+
+  {type:'Framework',tags:['framework'],year:2024,venue:'GitHub',
+   title:'Flowise',
+   url:'https://flowiseai.com',
+   repo:'https://github.com/FlowiseAI/Flowise',
+   desc:'Open-source drag-and-drop UI for building LLM apps and RAG pipelines without code. Node-based canvas powered by LangChain; supports 100+ integrations.',
+   citations:33000,method:'Framework',tasks:[],datasets:[],related:['Dify']},
+
+  {type:'Framework',tags:['framework'],year:2024,venue:'GitHub',
+   title:'Cognita',
+   url:'https://cognita.truefoundry.com',
+   repo:'https://github.com/truefoundry/cognita',
+   desc:'Open-source RAG framework designed for production deployment. Modular architecture with REST APIs for ingestion, indexing, retrieval, and evaluation — Kubernetes-ready.',
+   citations:3500,method:'Framework',tasks:[],datasets:[],related:['Haystack','LlamaIndex']},
+
+  {type:'Framework',tags:['framework'],year:2024,venue:'GitHub',
+   title:'Verba',
+   url:'https://verba.weaviate.io',
+   repo:'https://github.com/weaviate/Verba',
+   desc:'Open-source RAG chatbot powered by Weaviate. Upload your documents and get a fully functional Q&A chatbot with a built-in Svelte frontend — no code required.',
+   citations:6000,method:'Framework',tasks:[],datasets:[],related:['Cognita']},
+
+  {type:'Framework',tags:['framework'],year:2024,venue:'GitHub',
+   title:'Letta (formerly MemGPT)',
+   url:'https://letta.ai',
+   repo:'https://github.com/letta-ai/letta',
+   desc:'Stateful agent framework with persistent memory and long-term context management. Enables RAG-like retrieval over an agent\'s own memory for context-aware conversations.',
+   citations:12000,method:'Framework',tasks:[],datasets:[],related:['Mastra']},
+
+  {type:'Framework',tags:['framework'],year:2024,venue:'GitHub',
+   title:'Mastra',
+   url:'https://mastra.ai',
+   repo:'https://github.com/mastraai/mastra',
+   desc:'TypeScript-first AI framework for building agents and RAG pipelines. Includes tool use, memory, workflow primitives, and observability for production-grade LLM apps.',
+   citations:5000,method:'Framework',tasks:[],datasets:[],related:['LangChain']},
+
+  {type:'Framework',tags:['framework'],year:2024,venue:'GitHub',
+   title:'LiteLLM',
+   url:'https://litellm.ai',
+   repo:'https://github.com/BerriAI/litellm',
+   desc:'Unified LLM API gateway with an OpenAI-compatible interface supporting 100+ LLM providers. Simplifies provider switching, load balancing, and cost tracking in RAG pipelines.',
+   citations:15000,method:'Framework',tasks:[],datasets:[],related:['LangChain']},
+
+  {type:'Framework',tags:['framework'],year:2024,venue:'GitHub',
+   title:'Pathway',
+   url:'https://pathway.com',
+   repo:'https://github.com/pathwaycom/pathway',
+   desc:'Python data processing framework for real-time LLM pipelines. Enables streaming RAG with live document updates, incremental indexing, and low-latency retrieval.',
+   citations:6000,method:'Framework',tasks:[],datasets:[],related:['CocoIndex']},
+
+  {type:'Framework',tags:['framework'],year:2025,venue:'GitHub',
+   title:'CocoIndex',
+   url:'https://cocoindex.io',
+   repo:'https://github.com/cocoindex-io/cocoindex',
+   desc:'Incremental data transformation framework for AI indexing pipelines. Keeps vector indexes fresh with minimal recomputation as source data changes — efficient for live RAG.',
+   citations:2000,method:'Framework',tasks:[],datasets:[],related:['Pathway','LlamaIndex']},
+
+  {type:'Framework',tags:['framework'],year:2025,venue:'GitHub',
+   title:'Kreuzberg',
+   url:'https://github.com/Goldziher/kreuzberg',
+   repo:'https://github.com/Goldziher/kreuzberg',
+   desc:'Async-first Python document extraction library for RAG pipelines. Extracts clean text from PDFs, images, and Office documents using multiple pluggable backends.',
+   citations:800,method:'Framework',tasks:[],datasets:[],related:['CocoIndex']},
+
+  {type:'Framework',tags:['framework'],year:2025,venue:'GitHub',
+   title:'Swiftide',
+   url:'https://swiftide.rs',
+   repo:'https://github.com/bosun-ai/swiftide',
+   desc:'Fast, streaming indexing and query pipeline library written in Rust. Builds high-throughput RAG pipelines with async streaming, Tokio integration, and minimal overhead.',
+   citations:500,method:'Framework',tasks:[],datasets:[],related:[]},
+
+  {type:'Framework',tags:['framework'],year:2025,venue:'GitHub',
+   title:'Agentset',
+   url:'https://agentset.ai',
+   repo:'https://github.com/agentset-ai/agentset',
+   desc:'Namespace-based RAG platform for organizing and querying documents at scale. Provides REST API for ingestion, vector retrieval, and agentic workflows with multi-tenant support.',
+   citations:200,method:'Framework',tasks:[],datasets:[],related:['Cognita']},
+
+  // ── VECTOR DATABASES ──
+  {type:'Vector DB',tags:['database'],year:2024,venue:'Open Source',
+   title:'Chroma DB',
+   url:'https://www.trychroma.com',
+   repo:'https://github.com/chroma-core/chroma',
+   desc:'The AI-native open-source embedding database. Simple Python API for storing, querying, and managing embeddings with metadata — the easiest way to get started with RAG.',
+   citations:15000,method:'Open Source',tasks:[],datasets:[],related:['FAISS','Qdrant']},
+
+  {type:'Vector DB',tags:['database'],year:2024,venue:'Open Source',
+   title:'Milvus',
+   url:'https://milvus.io',
+   repo:'https://github.com/milvus-io/milvus',
+   desc:'High-performance open-source vector database built for billion-scale similarity search. Supports IVF, HNSW, DiskANN indexes and hybrid dense + sparse retrieval.',
+   citations:30000,method:'Open Source',tasks:[],datasets:[],related:['Qdrant','Weaviate']},
+
+  {type:'Vector DB',tags:['database'],year:2024,venue:'Open Source',
+   title:'Qdrant',
+   url:'https://qdrant.tech',
+   repo:'https://github.com/qdrant/qdrant',
+   desc:'High-performance vector similarity search engine written in Rust. Supports payload filtering, sparse vectors (BM42), named vectors, and multimodal embeddings.',
+   citations:21000,method:'Open Source',tasks:[],datasets:[],related:['Milvus','Weaviate']},
+
+  {type:'Vector DB',tags:['database'],year:2024,venue:'Open Source',
+   title:'Weaviate',
+   url:'https://weaviate.io',
+   repo:'https://github.com/weaviate/weaviate',
+   desc:'Open-source vector database with built-in hybrid search (dense + BM25), multi-tenancy, and a GraphQL/REST API. Supports both fully managed and self-hosted deployments.',
+   citations:11000,method:'Open Source',tasks:[],datasets:[],related:['Milvus','Qdrant']},
+
+  {type:'Vector DB',tags:['database'],year:2024,venue:'Open Source',
+   title:'FAISS',
+   url:'https://faiss.ai',
+   repo:'https://github.com/facebookresearch/faiss',
+   desc:'Facebook AI Research\'s library for efficient similarity search and dense vector clustering. The research gold standard for CPU/GPU vector search — fast and battle-tested.',
+   citations:29000,method:'Open Source',tasks:[],datasets:[],related:['Chroma DB','Qdrant']},
+
+  {type:'Vector DB',tags:['database'],year:2024,venue:'Open Source',
+   title:'pgvector',
+   url:'https://github.com/pgvector/pgvector',
+   repo:'https://github.com/pgvector/pgvector',
+   desc:'Open-source vector similarity search extension for PostgreSQL. Adds a vector data type and exact/approximate nearest neighbor search to any existing Postgres database.',
+   citations:13000,method:'Open Source',tasks:[],datasets:[],related:['Chroma DB','Lantern']},
+
+  {type:'Vector DB',tags:['database'],year:2024,venue:'Open Source',
+   title:'Elasticsearch',
+   url:'https://www.elastic.co/elasticsearch',
+   repo:'https://github.com/elastic/elasticsearch',
+   desc:'Distributed search engine with built-in dense vector (kNN) field and ANN search via HNSW. Combines full-text BM25 and vector search for powerful hybrid retrieval at scale.',
+   citations:70000,method:'Open Source',tasks:[],datasets:[],related:['OpenSearch','Weaviate']},
+
+  {type:'Vector DB',tags:['database'],year:2024,venue:'Open Source',
+   title:'OpenSearch',
+   url:'https://opensearch.org',
+   repo:'https://github.com/opensearch-project/OpenSearch',
+   desc:'AWS-led open-source fork of Elasticsearch with a k-NN plugin for vector similarity search. Full-text and vector hybrid search out of the box — free and self-hostable.',
+   citations:9000,method:'Open Source',tasks:[],datasets:[],related:['Elasticsearch']},
+
+  {type:'Vector DB',tags:['database'],year:2024,venue:'Open Source',
+   title:'Redis Stack',
+   url:'https://redis.io/docs/interact/search-and-query',
+   repo:'https://github.com/redis/redis',
+   desc:'Redis with vector similarity search via RediSearch. In-memory vector store for ultra-low-latency RAG pipelines. Supports HNSW and FLAT indexes with metadata filtering.',
+   citations:65000,method:'Open Source',tasks:[],datasets:[],related:['pgvector']},
+
+  {type:'Vector DB',tags:['database'],year:2024,venue:'Open Source',
+   title:'Neo4j',
+   url:'https://neo4j.com',
+   repo:'https://github.com/neo4j/neo4j',
+   desc:'Graph database with native vector index support. Uniquely combines graph traversal with vector similarity search — ideal for knowledge graph RAG and GraphRAG pipelines.',
+   citations:13000,method:'Open Source',tasks:[],datasets:[],related:['Weaviate']},
+
+  {type:'Vector DB',tags:['database'],year:2024,venue:'Open Source',
+   title:'Apache Cassandra',
+   url:'https://cassandra.apache.org',
+   repo:'https://github.com/apache/cassandra',
+   desc:'Highly scalable, distributed NoSQL database with vector search via SAI (Storage-Attached Indexing). Best for high-write-throughput RAG at massive scale.',
+   citations:8000,method:'Open Source',tasks:[],datasets:[],related:['Milvus']},
+
+  {type:'Vector DB',tags:['database'],year:2024,venue:'Open Source',
+   title:'Vespa',
+   url:'https://vespa.ai',
+   repo:'https://github.com/vespa-engine/vespa',
+   desc:'Big data serving engine with built-in ANN search and real-time updates. Supports hybrid BM25+vector retrieval and complex ranking expressions at scale.',
+   citations:6000,method:'Open Source',tasks:[],datasets:[],related:['Elasticsearch','Qdrant']},
+
+  {type:'Vector DB',tags:['database'],year:2024,venue:'Open Source',
+   title:'SurrealDB',
+   url:'https://surrealdb.com',
+   repo:'https://github.com/surrealdb/surrealdb',
+   desc:'Multi-model database combining vector search, graph relations, and document storage. One database for all RAG data needs — embeddings, metadata, and graph structure.',
+   citations:27000,method:'Open Source',tasks:[],datasets:[],related:['Neo4j']},
+
+  {type:'Vector DB',tags:['database'],year:2024,venue:'Open Source',
+   title:'Lantern',
+   url:'https://lantern.dev',
+   repo:'https://github.com/lanterndata/lantern',
+   desc:'PostgreSQL extension for fast vector search using HNSW and DiskANN indexing. Alternative to pgvector with improved performance for large-scale vector workloads.',
+   citations:1000,method:'Open Source',tasks:[],datasets:[],related:['pgvector']},
+
+  {type:'Vector DB',tags:['database'],year:2024,venue:'Managed',
+   title:'Pinecone',
+   url:'https://www.pinecone.io',
+   repo:null,
+   desc:'Fully managed vector database purpose-built for production ML. Handles infrastructure, scaling, and updates automatically with low-latency similarity search as a service.',
+   citations:null,method:'Managed DB',tasks:[],datasets:[],related:['Weaviate','Qdrant']},
+
+  {type:'Vector DB',tags:['database'],year:2024,venue:'Managed',
+   title:'MongoDB Atlas Vector Search',
+   url:'https://www.mongodb.com/products/platform/atlas-vector-search',
+   repo:null,
+   desc:'Built-in vector search within MongoDB Atlas. Store embeddings alongside operational data and run vector similarity searches within standard MongoDB aggregation queries.',
+   citations:null,method:'Managed DB',tasks:[],datasets:[],related:['Azure Cosmos DB']},
+
+  {type:'Vector DB',tags:['database'],year:2024,venue:'Managed',
+   title:'Azure Cosmos DB',
+   url:'https://azure.microsoft.com/en-us/products/cosmos-db',
+   repo:null,
+   desc:'Microsoft\'s globally distributed NoSQL database with built-in vector search using DiskANN indexing. Scales RAG pipelines globally with multi-region replication.',
+   citations:null,method:'Managed DB',tasks:[],datasets:[],related:['MongoDB Atlas Vector Search']},
+
+  {type:'Vector DB',tags:['database'],year:2024,venue:'Managed',
+   title:'Oracle AI Vector Search',
+   url:'https://www.oracle.com/database/ai-vector-search',
+   repo:null,
+   desc:'Native vector search in Oracle Database 23ai. Run similarity search on embeddings stored alongside relational data — no separate vector DB infrastructure required.',
+   citations:null,method:'Managed DB',tasks:[],datasets:[],related:['Azure Cosmos DB']},
+
+  {type:'Vector DB',tags:['database'],year:2024,venue:'Managed',
+   title:'Couchbase',
+   url:'https://www.couchbase.com',
+   repo:null,
+   desc:'Distributed NoSQL database with integrated vector search via the Search Service. Combines full-text search, key-value access, and vector operations in one platform.',
+   citations:null,method:'Managed DB',tasks:[],datasets:[],related:['MongoDB Atlas Vector Search']},
+
+  // ── EVALUATION TOOLS ──
+  {type:'Eval Tool',tags:['evaluation'],year:2024,venue:'Open Source',
+   title:'RAGAS',
+   url:'https://ragas.io',
+   repo:'https://github.com/explodinggradients/ragas',
+   desc:'Reference-free RAG evaluation framework. Measures context precision, context recall, faithfulness, and answer relevance without needing ground-truth answers.',
+   citations:7000,method:'Eval Tool',tasks:[],datasets:[],related:['LangFuse','Opik (by Comet)']},
+
+  {type:'Eval Tool',tags:['evaluation'],year:2024,venue:'Open Source',
+   title:'LangFuse',
+   url:'https://langfuse.com',
+   repo:'https://github.com/langfuse/langfuse',
+   desc:'Open-source LLM observability platform. Traces every step of RAG pipelines, logs inputs/outputs, and runs automated evaluation scorers for faithfulness and relevance.',
+   citations:9000,method:'Eval Tool',tasks:[],datasets:[],related:['RAGAS','LangSmith']},
+
+  {type:'Eval Tool',tags:['evaluation'],year:2024,venue:'Open Source',
+   title:'Opik (by Comet)',
+   url:'https://www.comet.com/site/products/opik',
+   repo:'https://github.com/comet-ml/opik',
+   desc:'Open-source LLM evaluation and observability platform. Supports RAG pipeline tracing, hallucination scoring, and automated evaluation with a clean experiment comparison UI.',
+   citations:4000,method:'Eval Tool',tasks:[],datasets:[],related:['LangFuse','RAGAS']},
+
+  {type:'Eval Tool',tags:['evaluation'],year:2024,venue:'Open Source',
+   title:'Hugging Face Evaluate',
+   url:'https://huggingface.co/docs/evaluate',
+   repo:'https://github.com/huggingface/evaluate',
+   desc:'HF library providing standard NLP evaluation metrics — BLEU, ROUGE, BERTScore, F1, Exact Match — for automated offline RAG evaluation against reference answers.',
+   citations:1800,method:'Eval Tool',tasks:[],datasets:[],related:['RAGAS']},
+
+  {type:'Eval Tool',tags:['evaluation'],year:2024,venue:'Managed',
+   title:'LangSmith',
+   url:'https://smith.langchain.com',
+   repo:null,
+   desc:'LangChain\'s managed platform for testing, debugging, and monitoring LLM apps. Supports end-to-end RAG tracing, dataset-based evaluation, and regression testing.',
+   citations:null,method:'Managed Tool',tasks:[],datasets:[],related:['LangFuse']},
+
+  {type:'Eval Tool',tags:['evaluation'],year:2024,venue:'Managed',
+   title:'Weights & Biases (W&B)',
+   url:'https://wandb.ai/site/solutions/llmops',
+   repo:null,
+   desc:'ML experiment tracking extended to LLMOps. Log RAG experiments, track retrieval quality over time, compare evaluation runs, and monitor production metrics.',
+   citations:null,method:'Managed Tool',tasks:[],datasets:[],related:['LangFuse','LangSmith']},
+
+  // ── TECHNIQUES: CHUNKING ──
+  {type:'Technique',tags:['technique'],year:null,venue:'Technique',
+   title:'Fixed-Size Chunking',
+   url:'https://docs.llamaindex.ai/en/stable/module_guides/loading/node_parsers/modules/',
+   repo:null,
+   desc:'Splits documents into fixed-length token or character windows (e.g. 512 tokens, 50-token overlap). The simplest baseline — works well for uniform, dense text.',
+   citations:null,method:'Chunking',tasks:[],datasets:[],related:['Semantic Chunking','Recursive Character Text Splitting']},
+
+  {type:'Technique',tags:['technique'],year:null,venue:'Technique',
+   title:'Semantic Chunking',
+   url:'https://python.langchain.com/docs/how_to/semantic-chunker/',
+   repo:null,
+   desc:'Groups sentences into chunks based on embedding similarity, ensuring each chunk is semantically coherent. Produces more meaningful retrieval units than arbitrary size splits.',
+   citations:null,method:'Chunking',tasks:[],datasets:[],related:['Fixed-Size Chunking','Document-Based Chunking']},
+
+  {type:'Technique',tags:['technique'],year:null,venue:'Technique',
+   title:'Recursive Character Text Splitting',
+   url:'https://python.langchain.com/docs/how_to/recursive_text_splitter/',
+   repo:null,
+   desc:'Hierarchically splits on paragraph → sentence → word boundaries until chunks fit the size limit. Default splitter in LangChain — balances document structure and size constraints.',
+   citations:null,method:'Chunking',tasks:[],datasets:[],related:['Fixed-Size Chunking','Semantic Chunking']},
+
+  {type:'Technique',tags:['technique'],year:null,venue:'Technique',
+   title:'Document-Based Chunking',
+   url:'https://unstructured.io/blog/chunking-for-rag-best-practices',
+   repo:null,
+   desc:'Preserves document structure — headings, paragraphs, tables — as chunk boundaries. Keeps logically related content together, improving context quality for structured documents.',
+   citations:null,method:'Chunking',tasks:[],datasets:[],related:['Semantic Chunking']},
+
+  {type:'Technique',tags:['technique'],year:null,venue:'Technique',
+   title:'Agentic Chunking',
+   url:'https://github.com/FullStackRetrieval-com/RetrievalTutorials',
+   repo:'https://github.com/FullStackRetrieval-com/RetrievalTutorials',
+   desc:'Uses LLMs to intelligently decide chunk boundaries by reasoning about content coherence and topic shifts. More accurate but expensive — best for high-value document collections.',
+   citations:null,method:'Chunking',tasks:[],datasets:[],related:['Semantic Chunking']},
+
+  // ── TECHNIQUES: RETRIEVAL ──
+  {type:'Technique',tags:['technique'],year:null,venue:'Technique',
+   title:'Dense Vector Retrieval',
+   url:'https://www.pinecone.io/learn/dense-retrieval/',
+   repo:null,
+   desc:'Embeds queries and documents into a shared dense vector space and retrieves nearest neighbors via ANN algorithms. State-of-the-art for semantic similarity matching.',
+   citations:null,method:'Retrieval',tasks:[],datasets:[],related:['Hybrid Retrieval (Dense + Sparse)','BM25 Sparse Retrieval']},
+
+  {type:'Technique',tags:['technique'],year:null,venue:'Technique',
+   title:'BM25 Sparse Retrieval',
+   url:'https://www.elastic.co/blog/practical-bm25-part-2-the-bm25-algorithm-and-its-variables',
+   repo:null,
+   desc:'Classic term-frequency ranking based on BM25 scoring. Excellent for keyword-exact matches, abbreviations, and domain-specific jargon where semantic search falls short.',
+   citations:null,method:'Retrieval',tasks:[],datasets:[],related:['Dense Vector Retrieval','Hybrid Retrieval (Dense + Sparse)']},
+
+  {type:'Technique',tags:['technique'],year:null,venue:'Technique',
+   title:'Hybrid Retrieval (Dense + Sparse)',
+   url:'https://weaviate.io/blog/hybrid-search-explained',
+   repo:null,
+   desc:'Combines dense vector and sparse BM25 scores via Reciprocal Rank Fusion or linear interpolation. Best of both worlds — semantic coverage plus lexical precision.',
+   citations:null,method:'Retrieval',tasks:[],datasets:[],related:['Dense Vector Retrieval','BM25 Sparse Retrieval']},
+
+  {type:'Technique',tags:['technique'],year:2023,venue:'arXiv 2023',
+   title:'HyDE: Hypothetical Document Embeddings',
+   url:'https://arxiv.org/abs/2212.10496',
+   repo:null,
+   desc:'Generates a hypothetical answer document from the query using an LLM, then retrieves real documents similar to this hypothesis. Significantly improves zero-shot retrieval quality.',
+   citations:800,method:'Retrieval',tasks:['Open-domain QA'],datasets:['Natural Questions','TriviaQA'],related:['Dense Vector Retrieval','RAG Fusion']},
+
+  {type:'Technique',tags:['technique'],year:2024,venue:'Anthropic 2024',
+   title:'Contextual Retrieval',
+   url:'https://www.anthropic.com/news/contextual-retrieval',
+   repo:null,
+   desc:'Prepends chunk-specific context (auto-generated by Claude) to each chunk before embedding. Dramatically reduces retrieval failures for chunks that lose meaning out of context.',
+   citations:null,method:'Retrieval',tasks:[],datasets:[],related:['Semantic Chunking','Dense Vector Retrieval']},
+
+  // ── TECHNIQUES: PROMPTING & EMBEDDINGS ──
+  {type:'Technique',tags:['technique'],year:null,venue:'Technique',
+   title:'Chain-of-Thought (CoT) Prompting',
+   url:'https://arxiv.org/abs/2201.11903',
+   repo:null,
+   desc:'Guides LLMs to reason step-by-step before answering. Combined with RAG, helps models synthesize multiple retrieved passages into coherent, well-reasoned answers.',
+   citations:5000,method:'Prompting',tasks:[],datasets:[],related:['ReAct Prompting']},
+
+  {type:'Technique',tags:['technique'],year:null,venue:'Technique',
+   title:'ReAct Prompting',
+   url:'https://arxiv.org/abs/2210.03629',
+   repo:null,
+   desc:'Interleaves reasoning traces with action steps — model reasons, retrieves, observes retrieved content, then reasons again. The foundation of agentic RAG pipelines with tool use.',
+   citations:3000,method:'Prompting',tasks:[],datasets:[],related:['Chain-of-Thought (CoT) Prompting']},
+
+  {type:'Technique',tags:['technique'],year:null,venue:'Technique',
+   title:'Few-Shot Prompting for RAG',
+   url:'https://learnprompting.org/docs/basic_applications/few_shot',
+   repo:null,
+   desc:'Provides worked examples of retrieval-augmented Q&A within the prompt to teach the model how to use retrieved context, cite sources, and avoid hallucination.',
+   citations:null,method:'Prompting',tasks:[],datasets:[],related:['Chain-of-Thought (CoT) Prompting']},
+
+  {type:'Technique',tags:['technique'],year:null,venue:'Technique',
+   title:'Data Cleaning & Normalization',
+   url:'https://unstructured.io',
+   repo:null,
+   desc:'Pre-processing step to extract clean text from PDFs/HTML/Office files, remove boilerplate noise, fix encoding, and normalize whitespace before chunking and indexing.',
+   citations:null,method:'Data Prep',tasks:[],datasets:[],related:['Fixed-Size Chunking','Semantic Chunking']},
+
+  {type:'Technique',tags:['technique'],year:null,venue:'Technique',
+   title:'Re-Ranking Retrieved Results',
+   url:'https://www.sbert.net/examples/applications/cross-encoder/README.html',
+   repo:'https://github.com/UKPLab/sentence-transformers',
+   desc:'Applies a cross-encoder model to re-score and reorder the top-K retrieved chunks before passing them to the generator. Significantly improves precision of the final context.',
+   citations:null,method:'Retrieval',tasks:[],datasets:[],related:['Dense Vector Retrieval','Hybrid Retrieval (Dense + Sparse)']},
+
+  // ── TUTORIALS ──
+  {type:'Tutorial',tags:['tutorial'],year:2025,venue:'YouTube',
+   title:'Vision-RAG: Embedding Pages as Images',
+   url:'https://www.youtube.com/watch?v=npkp4mSweEg',
+   repo:null,
+   desc:'Demonstrates how to embed document pages as images for vision-model RAG — bypasses text extraction entirely, handling complex layouts like tables, charts, and diagrams natively.',
+   citations:null,method:'Tutorial',tasks:[],datasets:[],related:['Multimodal RAG: Text, Images, and Audio']},
+
+  {type:'Tutorial',tags:['tutorial'],year:2025,venue:'Medium',
+   title:'Cache-Augmented Generation (CAG)',
+   url:'https://medium.com/@ronantech/cache-augmented-generation-cag-in-llms-a-step-by-step-tutorial-6ac35d415eec',
+   repo:null,
+   desc:'Step-by-step tutorial on pre-loading documents into the LLM context window and caching the KV state. An alternative to retrieval for small, static, frequently accessed document sets.',
+   citations:null,method:'Tutorial',tasks:[],datasets:[],related:['Corrective Retrieval Augmented Generation (CRAG)']},
+
+  {type:'Tutorial',tags:['tutorial'],year:2024,venue:'LangGraph Docs',
+   title:'Agentic RAG with LangGraph',
+   url:'https://langchain-ai.github.io/langgraph/tutorials/rag/langgraph_agentic_rag/',
+   repo:null,
+   desc:'Official LangGraph tutorial building an agentic RAG system with retrieval grading, hallucination detection, and web search fallback — complete working code included.',
+   citations:null,method:'Tutorial',tasks:[],datasets:[],related:['PlanRAG: A Plan-then-Retrieval Augmented Generation for Reasoning']},
+
+  {type:'Tutorial',tags:['tutorial'],year:2024,venue:'Medium',
+   title:'Temporal Augmented Retrieval (TAR)',
+   url:'https://adam-rida.medium.com/temporal-augmented-retrieval-tar-dynamic-rag-ad737506dfcc',
+   repo:null,
+   desc:'Tutorial on time-aware RAG retrieval — weighting documents by recency and temporal relevance to improve answer accuracy for time-sensitive queries.',
+   citations:null,method:'Tutorial',tasks:[],datasets:[],related:['Contextual Retrieval']},
+
+  {type:'Tutorial',tags:['tutorial'],year:2024,venue:'Supabase Docs',
+   title:'Building RAG with Supabase & pgvector',
+   url:'https://supabase.com/docs/guides/ai/rag-with-permissions',
+   repo:null,
+   desc:'Platform guide to building a RAG pipeline using Supabase (PostgreSQL + pgvector) for vector storage, with row-level security for per-user document access control.',
+   citations:null,method:'Tutorial',tasks:[],datasets:[],related:['pgvector','Contextual Retrieval']},
+
+  {type:'Tutorial',tags:['tutorial'],year:2024,venue:'Medium/Blog',
+   title:'FLARE in Practice: Better RAG with Active Retrieval',
+   url:'https://medium.com/etoai/better-rag-with-active-retrieval-augmented-generation-flare-3b66646e2a9f',
+   repo:null,
+   desc:'Practical tutorial implementing FLARE active retrieval — triggering retrieval only when the model predicts uncertain tokens, reducing unnecessary retrieval calls.',
+   citations:null,method:'Tutorial',tasks:[],datasets:[],related:['FLARE: Active Retrieval Augmented Generation']},
+
+  {type:'Tutorial',tags:['tutorial'],year:2024,venue:'Microsoft Tech Blog',
+   title:'Teaching LLMs to be Better at RAG with RAFT',
+   url:'https://techcommunity.microsoft.com/t5/ai-ai-platform-blog/raft-a-new-way-to-teach-llms-to-be-better-at-rag/ba-p/4084674',
+   repo:null,
+   desc:'Microsoft blog explaining RAFT fine-tuning: how to construct training data with distractor documents, train with them, and evaluate domain-specific RAG improvement.',
+   citations:null,method:'Tutorial',tasks:[],datasets:[],related:['RAFT: Retrieval Augmented Fine-Tuning','InstructRAG']},
+];
+
+const readingPath = [
+  {title:'Cache-Augmented Generation (CAG)',note:'Start here — understand what problem RAG solves and when simpler alternatives suffice'},
+  {title:'Dense Vector Retrieval',note:'Core concept: how semantic similarity search works with embeddings'},
+  {title:'Fixed-Size Chunking',note:'First practical step — how to split documents for indexing'},
+  {title:'Chroma DB',note:'Simplest vector store to get your first RAG prototype running'},
+  {title:'LangChain',note:'Most popular framework — build your first end-to-end RAG pipeline'},
+  {title:'RAGAS',note:'Learn to measure quality — essential before optimizing anything'},
+  {title:'Self-RAG: Learning to Retrieve, Generate and Critique',note:'Foundational research on making LLMs smarter retrievers'},
+  {title:'Corrective Retrieval Augmented Generation (CRAG)',note:'Practical reliability improvement — handle bad retrieval gracefully'},
+  {title:'HyDE: Hypothetical Document Embeddings',note:'Retrieval quality boost — generate before you retrieve'},
+  {title:'Agentic RAG with LangGraph',note:'Advanced: orchestrate multi-step retrieval with agents and fallbacks'},
+];
+
+let activeFilter='all', activeSort='default';
+
+function thumbColor(tags){ return thumbColor_map[tags[0]]||'#8b949e'; }
+
+const thumbColor_map = {
+  research:'#58a6ff', framework:'#bc8cff', database:'#3fb950',
+  evaluation:'#e3b341', technique:'#39d1c7', tutorial:'#f47067'
+};
+
+function getThumbColor(tags){ return thumbColor_map[tags[0]]||'#8b949e'; }
+
+function buildCard(p, i){
+  const isNew = p.year && p.year >= 2025;
+  const hasRepo = !!p.repo;
+  const tagHtml = p.tags.map(t=>`<span class="tag tag-${t}">${tagLabel[t]||t}</span>`).join('');
+  const taskHtml = (p.tasks||[]).map(t=>`<span class="chip chip-task">${t}</span>`).join('');
+  const dsHtml = (p.datasets||[]).map(d=>`<span class="chip chip-dataset">${d}</span>`).join('');
+  const tCls = typeClass[p.type]||'type-paper';
+  const mCls = methodCls[p.method]||'method-framework';
+  const venueStr = p.venue && p.venue!=='Technique' ? p.venue : '';
+
+  // citations display: papers show "N citations", others show "★ N stars"
+  let scoreStr = '';
+  if(p.citations){
+    if(p.type==='Paper') scoreStr = `<svg width="11" height="11" viewBox="0 0 16 16" fill="#8b949e"><path d="M0 5.75C0 4.784.784 4 1.75 4h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 15h-7.5A1.75 1.75 0 010 13.25v-7.5z"/><path d="M6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5C5 .784 5.784 0 6.75 0zm0 1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"/></svg>${p.citations.toLocaleString()} citations`;
+    else scoreStr = `★ ${p.citations.toLocaleString()} stars`;
+  }
+
+  const relHtml = p.related&&p.related.length ? `<div class="related">See also: ${p.related.map(r=>`<span onclick="searchFor('${r.substring(0,30)}')">${r.substring(0,40)}${r.length>40?'…':''}</span>`).join(', ')}</div>` : '';
+
+  // Link label: papers → "Paper", everything else → "Link"
+  const linkLabel = p.type==='Paper' ? 'Paper' : 'Visit';
+
+  return `
+  <div class="card" data-tags="${p.tags.join(' ')}${hasRepo?' oss':''}" data-year="${p.year||0}" data-citations="${p.citations||0}" data-title="${p.title}" data-idx="${i}">
+    <div class="card-thumb" style="background:${getThumbColor(p.tags)}"></div>
+    <div class="card-body">
+      <div class="card-row1">
+        <div style="display:flex;gap:5px;align-items:center;flex-wrap:wrap">
+          ${isNew?'<span class="badge-new">NEW</span>':''}
+          <span class="badge-type ${tCls}">${p.type}</span>
+          <span class="badge-method ${mCls}">${p.method}</span>
+          ${hasRepo?'<span class="oss-dot" title="Open Source"></span>':''}
+        </div>
+        <span class="venue-year">${venueStr}</span>
+      </div>
+      <div class="card-tags">${tagHtml}</div>
+      <a class="card-title" href="${p.url}" target="_blank">${p.title}</a>
+      <div class="card-desc">${p.desc}</div>
+      ${taskHtml||dsHtml?`<div class="chip-row">${taskHtml}${dsHtml}</div>`:''}
+      ${relHtml}
+      <div class="card-footer">
+        <div class="citations">${scoreStr}</div>
+        <div class="card-links">
+          <a class="btn-link btn-paper" href="${p.url}" target="_blank">${linkLabel}</a>
+          ${hasRepo?`<a class="btn-link btn-code" href="${p.repo}" target="_blank">Code</a>`:''}
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function render(){
+  document.getElementById('card-grid').innerHTML = resources.map(buildCard).join('');
+  buildPathSteps();
+  applyFilters();
+}
+
+function buildPathSteps(){
+  const stepsEl = document.getElementById('path-steps');
+  stepsEl.innerHTML = readingPath.map((s,i)=>{
+    const r = resources.find(r=>r.title===s.title);
+    return `<div class="path-step"><div class="path-num">${i+1}</div><div><a href="${r?r.url:'#'}" target="_blank">${s.title}</a><div class="path-note">${s.note}</div></div></div>`;
+  }).join('');
+}
+
+function setFilter(tag, btn){
+  activeFilter = tag;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  applyFilters();
+}
+
+function setSort(s, btn){
+  activeSort = s;
+  document.querySelectorAll('.sort-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  sortCards();
+  applyFilters();
+}
+
+function sortCards(){
+  const grid = document.getElementById('card-grid');
+  const cards = [...grid.querySelectorAll('.card')];
+  cards.sort((a,b)=>{
+    if(activeSort==='year') return +b.dataset.year - +a.dataset.year;
+    if(activeSort==='citations') return +b.dataset.citations - +a.dataset.citations;
+    if(activeSort==='alpha') return a.dataset.title.localeCompare(b.dataset.title);
+    return +a.dataset.idx - +b.dataset.idx;
+  });
+  cards.forEach(c=>grid.appendChild(c));
+}
+
+function applyFilters(){
+  const query = document.getElementById('search').value.toLowerCase();
+  let visible=0, oss=0;
+  document.querySelectorAll('.card').forEach(card=>{
+    const tags = card.dataset.tags;
+    const text = card.innerText.toLowerCase();
+    const tagMatch = activeFilter==='all' || tags.includes(activeFilter);
+    const textMatch = !query || text.includes(query);
+    const show = tagMatch && textMatch;
+    card.style.display = show ? '' : 'none';
+    if(show){ visible++; if(tags.includes('oss')) oss++; }
+  });
+  document.getElementById('visible-count').textContent = visible;
+  document.getElementById('oss-count').textContent = oss;
+  document.getElementById('no-results').style.display = visible===0?'block':'none';
+}
+
+function searchFor(q){
+  document.getElementById('search').value = q;
+  setFilter('all', document.querySelector('.filter-btn'));
+  applyFilters();
+}
+
+function togglePath(btn){
+  const el = document.getElementById('reading-path');
+  const on = el.classList.toggle('visible');
+  btn.classList.toggle('active', on);
+  btn.textContent = on ? '★ Hide Learning Path' : '★ Show Learning Path for RAG Beginners';
+}
+
+render();
+</script>
+</body>
+</html>
