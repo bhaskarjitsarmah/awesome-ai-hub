@@ -6,197 +6,39 @@
   <title>Awesome GraphRAG</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #0d1117;
-      color: #e6edf3;
-      min-height: 100vh;
-    }
-
-    header {
-      text-align: center;
-      padding: 50px 20px 30px;
-      border-bottom: 1px solid #21262d;
-    }
-
-    header a.back {
-      display: inline-block;
-      margin-bottom: 20px;
-      color: #58a6ff;
-      text-decoration: none;
-      font-size: 0.9rem;
-    }
-
+    body { font-family: 'Segoe UI', sans-serif; background: #0d1117; color: #e6edf3; min-height: 100vh; }
+    header { text-align: center; padding: 50px 20px 30px; border-bottom: 1px solid #21262d; }
+    header a.back { display: inline-block; margin-bottom: 20px; color: #58a6ff; text-decoration: none; font-size: 0.9rem; }
     header a.back:hover { text-decoration: underline; }
-
-    header h1 {
-      font-size: 2.4rem;
-      background: linear-gradient(90deg, #3fb950, #58a6ff);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin-bottom: 10px;
-    }
-
-    header p {
-      color: #8b949e;
-      font-size: 1rem;
-      max-width: 650px;
-      margin: 0 auto;
-    }
-
-    .stats {
-      display: flex;
-      justify-content: center;
-      gap: 30px;
-      padding: 20px;
-      font-size: 0.85rem;
-      color: #8b949e;
-    }
-
+    header h1 { font-size: 2.4rem; background: linear-gradient(90deg, #3fb950, #58a6ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; }
+    header p { color: #8b949e; font-size: 1rem; max-width: 650px; margin: 0 auto; }
+    .stats { display: flex; justify-content: center; gap: 30px; padding: 16px; font-size: 0.85rem; color: #8b949e; flex-wrap: wrap; }
     .stats span { color: #e6edf3; font-weight: 600; }
-
-    .controls {
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-      flex-wrap: wrap;
-      padding: 10px 20px 0;
-    }
-
-    .controls input {
-      padding: 9px 14px;
-      border-radius: 8px;
-      border: 1px solid #30363d;
-      background: #161b22;
-      color: #e6edf3;
-      font-size: 0.95rem;
-      width: 320px;
-      outline: none;
-    }
-
-    .controls input:focus { border-color: #58a6ff; }
-
-    .filters {
-      display: flex;
-      justify-content: center;
-      gap: 8px;
-      flex-wrap: wrap;
-      padding: 16px 20px 0;
-    }
-
-    .filter-btn {
-      padding: 5px 14px;
-      border-radius: 20px;
-      border: 1px solid #30363d;
-      background: transparent;
-      color: #8b949e;
-      cursor: pointer;
-      font-size: 0.82rem;
-      transition: all 0.2s;
-    }
-
-    .filter-btn.active, .filter-btn:hover {
-      background: #1a3a2a;
-      color: #3fb950;
-      border-color: #3fb950;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
-      gap: 18px;
-      padding: 28px 40px;
-      max-width: 1300px;
-      margin: 0 auto;
-    }
-
-    .card {
-      background: #161b22;
-      border: 1px solid #21262d;
-      border-radius: 12px;
-      padding: 20px;
-      transition: border-color 0.2s, transform 0.2s;
-    }
-
-    .card:hover {
-      border-color: #3fb950;
-      transform: translateY(-2px);
-    }
-
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 10px;
-    }
-
-    .card-tags { display: flex; gap: 6px; flex-wrap: wrap; }
-
-    .tag {
-      font-size: 0.72rem;
-      padding: 2px 9px;
-      border-radius: 20px;
-      font-weight: 500;
-    }
-
-    .tag-knowledge    { background: #1f3a5f; color: #58a6ff; }
-    .tag-retrieval    { background: #1a3a2a; color: #3fb950; }
-    .tag-integration  { background: #2a1a3a; color: #bc8cff; }
-    .tag-survey       { background: #3a2a1a; color: #e3b341; }
-    .tag-medical      { background: #3a1a2a; color: #f47067; }
-    .tag-code         { background: #1a2a3a; color: #79c0ff; }
-    .tag-multimodal   { background: #2a3a1a; color: #7ce38b; }
-
-    .card-venue {
-      font-size: 0.72rem;
-      padding: 2px 9px;
-      border-radius: 20px;
-      background: #21262d;
-      color: #8b949e;
-    }
-
-    .card-link {
-      font-size: 0.98rem;
-      font-weight: 600;
-      color: #e6edf3;
-      text-decoration: none;
-      display: block;
-      margin-bottom: 6px;
-      line-height: 1.4;
-    }
-
-    .card-link:hover { color: #3fb950; }
-
-    .card-meta {
-      font-size: 0.78rem;
-      color: #8b949e;
-      margin-bottom: 8px;
-    }
-
-    .card-desc {
-      font-size: 0.85rem;
-      color: #8b949e;
-      line-height: 1.55;
-    }
-
-    .no-results {
-      text-align: center;
-      color: #8b949e;
-      padding: 60px 20px;
-      font-size: 1rem;
-      display: none;
-    }
-
-    footer {
-      text-align: center;
-      padding: 40px 20px;
-      color: #8b949e;
-      font-size: 0.85rem;
-      border-top: 1px solid #21262d;
-      margin-top: 20px;
-    }
-
+    .controls { display: flex; justify-content: center; padding: 10px 20px 0; }
+    .controls input { padding: 9px 14px; border-radius: 8px; border: 1px solid #30363d; background: #161b22; color: #e6edf3; font-size: 0.95rem; width: 340px; outline: none; }
+    .controls input:focus { border-color: #3fb950; }
+    .filters { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; padding: 14px 20px 0; }
+    .filter-btn { padding: 5px 14px; border-radius: 20px; border: 1px solid #30363d; background: transparent; color: #8b949e; cursor: pointer; font-size: 0.82rem; transition: all 0.2s; }
+    .filter-btn.active, .filter-btn:hover { background: #1a3a2a; color: #3fb950; border-color: #3fb950; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; padding: 24px 36px; max-width: 1400px; margin: 0 auto; }
+    .card { background: #161b22; border: 1px solid #21262d; border-radius: 10px; padding: 16px; transition: border-color 0.2s, transform 0.2s; }
+    .card:hover { border-color: #3fb950; transform: translateY(-2px); }
+    .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; gap: 6px; }
+    .card-tags { display: flex; gap: 5px; flex-wrap: wrap; }
+    .tag { font-size: 0.7rem; padding: 2px 8px; border-radius: 20px; font-weight: 500; white-space: nowrap; }
+    .tag-knowledge   { background: #1f3a5f; color: #58a6ff; }
+    .tag-retrieval   { background: #1a3a2a; color: #3fb950; }
+    .tag-integration { background: #2a1a3a; color: #bc8cff; }
+    .tag-survey      { background: #3a2a1a; color: #e3b341; }
+    .tag-benchmark   { background: #21262d; color: #8b949e; }
+    .tag-medical     { background: #3a1a2a; color: #f47067; }
+    .tag-code        { background: #1a2a3a; color: #79c0ff; }
+    .venue { font-size: 0.7rem; color: #8b949e; background: #21262d; padding: 2px 8px; border-radius: 20px; white-space: nowrap; flex-shrink: 0; }
+    .card a.title { font-size: 0.92rem; font-weight: 600; color: #e6edf3; text-decoration: none; display: block; margin-bottom: 5px; line-height: 1.4; }
+    .card a.title:hover { color: #3fb950; }
+    .card .desc { font-size: 0.82rem; color: #8b949e; line-height: 1.5; }
+    .no-results { text-align: center; color: #8b949e; padding: 60px 20px; display: none; }
+    footer { text-align: center; padding: 36px 20px; color: #8b949e; font-size: 0.85rem; border-top: 1px solid #21262d; margin-top: 20px; }
     footer a { color: #58a6ff; text-decoration: none; }
   </style>
 </head>
@@ -205,298 +47,30 @@
 <header>
   <a class="back" href="../">← Back to Awesome AI Hub</a>
   <h1>Awesome GraphRAG</h1>
-  <p>A curated collection of papers on Graph Retrieval-Augmented Generation — knowledge organization, retrieval, and integration with LLMs.</p>
+  <p>Complete curated list of papers on Graph Retrieval-Augmented Generation — knowledge organization, retrieval, integration, benchmarks, and more.</p>
 </header>
 
 <div class="stats">
-  <div><span id="visible-count">25</span> papers shown</div>
+  <div><span id="visible-count">0</span> papers shown</div>
   <div>Source: <a href="https://github.com/DEEP-PolyU/Awesome-GraphRAG" target="_blank" style="color:#58a6ff">DEEP-PolyU/Awesome-GraphRAG</a></div>
 </div>
 
 <div class="controls">
-  <input type="text" id="search" placeholder="Search papers, authors, venues..." oninput="applyFilters()" />
+  <input type="text" id="search" placeholder="Search papers, venues, keywords..." oninput="applyFilters()" />
 </div>
 
-<div class="filters" id="filters">
-  <button class="filter-btn active" onclick="setFilter('all', this)">All</button>
-  <button class="filter-btn" onclick="setFilter('knowledge', this)">Knowledge Organization</button>
-  <button class="filter-btn" onclick="setFilter('retrieval', this)">Retrieval</button>
-  <button class="filter-btn" onclick="setFilter('integration', this)">Integration</button>
-  <button class="filter-btn" onclick="setFilter('survey', this)">Survey</button>
-  <button class="filter-btn" onclick="setFilter('medical', this)">Medical</button>
-  <button class="filter-btn" onclick="setFilter('code', this)">Code</button>
+<div class="filters">
+  <button class="filter-btn active" onclick="setFilter('all',this)">All</button>
+  <button class="filter-btn" onclick="setFilter('knowledge',this)">Knowledge Org</button>
+  <button class="filter-btn" onclick="setFilter('retrieval',this)">Retrieval</button>
+  <button class="filter-btn" onclick="setFilter('integration',this)">Integration</button>
+  <button class="filter-btn" onclick="setFilter('survey',this)">Survey</button>
+  <button class="filter-btn" onclick="setFilter('benchmark',this)">Benchmark</button>
+  <button class="filter-btn" onclick="setFilter('medical',this)">Medical</button>
+  <button class="filter-btn" onclick="setFilter('code',this)">Code</button>
 </div>
 
-<div class="grid" id="card-grid">
-
-  <!-- ── SURVEY ── -->
-  <div class="card" data-tags="survey">
-    <div class="card-header">
-      <div class="card-tags"><span class="tag tag-survey">Survey</span></div>
-      <span class="card-venue">2025</span>
-    </div>
-    <a class="card-link" href="https://arxiv.org/abs/2501.00309" target="_blank">Retrieval-Augmented Generation with Graphs (GraphRAG)</a>
-    <div class="card-meta">arXiv:2501.00309</div>
-    <div class="card-desc">Comprehensive survey of GraphRAG methods covering knowledge organization, retrieval strategies, and LLM integration approaches.</div>
-  </div>
-
-  <div class="card" data-tags="survey">
-    <div class="card-header">
-      <div class="card-tags"><span class="tag tag-survey">Survey</span></div>
-      <span class="card-venue">2024</span>
-    </div>
-    <a class="card-link" href="https://arxiv.org/abs/2408.08921" target="_blank">Graph Retrieval-Augmented Generation: A Survey</a>
-    <div class="card-meta">arXiv:2408.08921</div>
-    <div class="card-desc">Systematic survey examining how graph structures improve RAG pipelines for LLMs across diverse downstream tasks.</div>
-  </div>
-
-  <!-- ── KNOWLEDGE ORGANIZATION ── -->
-  <div class="card" data-tags="knowledge">
-    <div class="card-header">
-      <div class="card-tags"><span class="tag tag-knowledge">Knowledge Organization</span></div>
-      <span class="card-venue">ICML 2025</span>
-    </div>
-    <a class="card-link" href="https://arxiv.org/abs/2502.14802" target="_blank">HippoRAG2: From RAG to Memory — Non-Parametric Continual Learning for LLMs</a>
-    <div class="card-meta">arXiv:2502.14802</div>
-    <div class="card-desc">Extends HippoRAG with non-parametric continual learning, enabling LLMs to retain and update knowledge without retraining.</div>
-  </div>
-
-  <div class="card" data-tags="knowledge">
-    <div class="card-header">
-      <div class="card-tags"><span class="tag tag-knowledge">Knowledge Organization</span></div>
-      <span class="card-venue">2024</span>
-    </div>
-    <a class="card-link" href="https://arxiv.org/abs/2404.16130" target="_blank">From Local to Global: A Graph RAG Approach to Query-Focused Summarization</a>
-    <div class="card-meta">Microsoft Research · arXiv:2404.16130</div>
-    <div class="card-desc">The seminal Microsoft GraphRAG paper. Builds a community-based knowledge graph from text corpora for global query-focused summarization.</div>
-  </div>
-
-  <div class="card" data-tags="knowledge">
-    <div class="card-header">
-      <div class="card-tags"><span class="tag tag-knowledge">Knowledge Organization</span></div>
-      <span class="card-venue">ICLR 2024</span>
-    </div>
-    <a class="card-link" href="https://arxiv.org/abs/2401.18059" target="_blank">RAPTOR: Recursive Abstractive Processing for Tree-Organized Retrieval</a>
-    <div class="card-meta">arXiv:2401.18059</div>
-    <div class="card-desc">Recursively builds a tree of summaries over documents enabling retrieval at multiple levels of abstraction for complex QA.</div>
-  </div>
-
-  <div class="card" data-tags="knowledge">
-    <div class="card-header">
-      <div class="card-tags"><span class="tag tag-knowledge">Knowledge Organization</span></div>
-      <span class="card-venue">2024</span>
-    </div>
-    <a class="card-link" href="https://arxiv.org/abs/2409.13731" target="_blank">KAG: Boosting LLMs in Professional Domains via Knowledge Augmented Generation</a>
-    <div class="card-meta">arXiv:2409.13731</div>
-    <div class="card-desc">Knowledge Augmented Generation framework combining logical reasoning and semantic retrieval for domain-specific LLM applications.</div>
-  </div>
-
-  <div class="card" data-tags="knowledge">
-    <div class="card-header">
-      <div class="card-tags"><span class="tag tag-knowledge">Knowledge Organization</span></div>
-      <span class="card-venue">NeurIPS 2025</span>
-    </div>
-    <a class="card-link" href="https://arxiv.org/abs/2502.01113" target="_blank">GFM-RAG: Graph Foundation Model for Retrieval Augmented Generation</a>
-    <div class="card-meta">arXiv:2502.01113</div>
-    <div class="card-desc">A graph foundation model pre-trained across diverse KGs that enables zero-shot generalization for GraphRAG retrieval tasks.</div>
-  </div>
-
-  <div class="card" data-tags="knowledge">
-    <div class="card-header">
-      <div class="card-tags"><span class="tag tag-knowledge">Knowledge Organization</span></div>
-      <span class="card-venue">2025</span>
-    </div>
-    <a class="card-link" href="https://arxiv.org/abs/2502.14902" target="_blank">PathRAG: Pruning Graph-based Retrieval Augmented Generation with Relational Paths</a>
-    <div class="card-meta">arXiv:2502.14902</div>
-    <div class="card-desc">Prunes irrelevant graph paths during retrieval to improve precision and reduce noise in GraphRAG pipelines.</div>
-  </div>
-
-  <div class="card" data-tags="knowledge">
-    <div class="card-header">
-      <div class="card-tags"><span class="tag tag-knowledge">Knowledge Organization</span></div>
-      <span class="card-venue">2025</span>
-    </div>
-    <a class="card-link" href="https://arxiv.org/abs/2502.09891" target="_blank">ArchRAG: Attributed Community-based Hierarchical Retrieval-Augmented Generation</a>
-    <div class="card-meta">arXiv:2502.09891</div>
-    <div class="card-desc">Hierarchical community-based indexing for GraphRAG that attributes graph nodes with rich semantic properties for improved retrieval.</div>
-  </div>
-
-  <!-- ── RETRIEVAL ── -->
-  <div class="card" data-tags="retrieval">
-    <div class="card-header">
-      <div class="card-tags"><span class="tag tag-retrieval">Retrieval</span></div>
-      <span class="card-venue">2024</span>
-    </div>
-    <a class="card-link" href="https://arxiv.org/abs/2410.05779" target="_blank">LightRAG: Simple and Fast Retrieval-Augmented Generation</a>
-    <div class="card-meta">arXiv:2410.05779</div>
-    <div class="card-desc">Lightweight GraphRAG framework that integrates dual-level (local + global) graph retrieval for fast, scalable question answering.</div>
-  </div>
-
-  <div class="card" data-tags="retrieval">
-    <div class="card-header">
-      <div class="card-tags"><span class="tag tag-retrieval">Retrieval</span></div>
-      <span class="card-venue">ICLR 2025</span>
-    </div>
-    <a class="card-link" href="https://arxiv.org/abs/2410.08815" target="_blank">Simple is Effective: The Roles of Graphs and LLMs in Knowledge-Graph-Based RAG</a>
-    <div class="card-meta">ICLR 2025</div>
-    <div class="card-desc">Studies the interplay between graph structure and LLM capabilities in KG-based RAG, showing simple retrievers often suffice.</div>
-  </div>
-
-  <div class="card" data-tags="retrieval">
-    <div class="card-header">
-      <div class="card-tags"><span class="tag tag-retrieval">Retrieval</span></div>
-      <span class="card-venue">ICLR 2024</span>
-    </div>
-    <a class="card-link" href="https://arxiv.org/abs/2307.07697" target="_blank">Think-on-Graph: Deep and Responsible Reasoning of LLMs on Knowledge Graphs</a>
-    <div class="card-meta">ICLR 2024</div>
-    <div class="card-desc">LLMs iteratively explore KG paths via beam search, grounding multi-hop reasoning in structured knowledge for faithfulness.</div>
-  </div>
-
-  <div class="card" data-tags="retrieval">
-    <div class="card-header">
-      <div class="card-tags"><span class="tag tag-retrieval">Retrieval</span></div>
-      <span class="card-venue">2024</span>
-    </div>
-    <a class="card-link" href="https://arxiv.org/abs/2407.10805" target="_blank">Think-on-Graph 2.0: Deep and Faithful LLM Reasoning with Knowledge-guided RAG</a>
-    <div class="card-meta">arXiv:2407.10805</div>
-    <div class="card-desc">Extends ToG with knowledge-guided retrieval that dynamically combines parametric and non-parametric knowledge for deeper reasoning.</div>
-  </div>
-
-  <div class="card" data-tags="retrieval">
-    <div class="card-header">
-      <div class="card-tags"><span class="tag tag-retrieval">Retrieval</span></div>
-      <span class="card-venue">2024</span>
-    </div>
-    <a class="card-link" href="https://arxiv.org/abs/2402.07630" target="_blank">G-Retriever: Retrieval-Augmented Generation for Textual Graph Understanding and QA</a>
-    <div class="card-meta">arXiv:2402.07630</div>
-    <div class="card-desc">Combines graph neural networks with LLMs for QA over textual graphs via soft prompting and subgraph retrieval.</div>
-  </div>
-
-  <div class="card" data-tags="retrieval">
-    <div class="card-header">
-      <div class="card-tags"><span class="tag tag-retrieval">Retrieval</span></div>
-      <span class="card-venue">2024</span>
-    </div>
-    <a class="card-link" href="https://arxiv.org/abs/2406.06572" target="_blank">Graph Neural Network Enhanced Retrieval for Question Answering of LLMs</a>
-    <div class="card-meta">arXiv:2406.06572</div>
-    <div class="card-desc">Uses GNNs to score and rank retrieved graph substructures before passing context to LLMs for multi-hop QA tasks.</div>
-  </div>
-
-  <div class="card" data-tags="retrieval">
-    <div class="card-header">
-      <div class="card-tags"><span class="tag tag-retrieval">Retrieval</span></div>
-      <span class="card-venue">2024</span>
-    </div>
-    <a class="card-link" href="https://arxiv.org/abs/2410.22353" target="_blank">RuleRAG: Rule-Guided Retrieval-Augmented Generation for Question Answering</a>
-    <div class="card-meta">arXiv:2410.22353</div>
-    <div class="card-desc">Augments RAG with logical rules extracted from KGs to guide retrieval and constrain LLM generation for structured QA.</div>
-  </div>
-
-  <div class="card" data-tags="retrieval">
-    <div class="card-header">
-      <div class="card-tags"><span class="tag tag-retrieval">Retrieval</span></div>
-      <span class="card-venue">2024</span>
-    </div>
-    <a class="card-link" href="https://arxiv.org/abs/2410.13080" target="_blank">Graph-constrained Reasoning: Faithful Reasoning on Knowledge Graphs with LLMs</a>
-    <div class="card-meta">arXiv:2410.13080</div>
-    <div class="card-desc">Constrains LLM decoding to valid KG paths via trie-based token constraints, eliminating hallucinated graph traversals.</div>
-  </div>
-
-  <!-- ── INTEGRATION ── -->
-  <div class="card" data-tags="integration">
-    <div class="card-header">
-      <div class="card-tags"><span class="tag tag-integration">Integration</span></div>
-      <span class="card-venue">NeurIPS 2024</span>
-    </div>
-    <a class="card-link" href="https://arxiv.org/abs/2410.23875" target="_blank">Plan-on-Graph: Self-Correcting Adaptive Planning of LLMs on Knowledge Graphs</a>
-    <div class="card-meta">arXiv:2410.23875</div>
-    <div class="card-desc">Self-correcting planning framework where LLMs iteratively revise their KG traversal plan based on retrieved evidence.</div>
-  </div>
-
-  <div class="card" data-tags="integration">
-    <div class="card-header">
-      <div class="card-tags"><span class="tag tag-integration">Integration</span></div>
-      <span class="card-venue">NeurIPS 2024</span>
-    </div>
-    <a class="card-link" href="https://arxiv.org/abs/2312.04815" target="_blank">KnowGPT: Knowledge Graph based PrompTing for Large Language Models</a>
-    <div class="card-meta">NeurIPS 2024</div>
-    <div class="card-desc">Injects structured KG triples into LLM prompts dynamically, improving factual grounding without fine-tuning.</div>
-  </div>
-
-  <div class="card" data-tags="integration">
-    <div class="card-header">
-      <div class="card-tags"><span class="tag tag-integration">Integration</span></div>
-      <span class="card-venue">ICLR 2024</span>
-    </div>
-    <a class="card-link" href="https://arxiv.org/abs/2305.04757" target="_blank">Reasoning on Graphs: Faithful and Interpretable LLM Reasoning</a>
-    <div class="card-meta">ICLR 2024</div>
-    <div class="card-desc">Framework for faithful multi-hop reasoning by grounding LLM inference steps explicitly on KG subgraph paths.</div>
-  </div>
-
-  <div class="card" data-tags="integration">
-    <div class="card-header">
-      <div class="card-tags"><span class="tag tag-integration">Integration</span></div>
-      <span class="card-venue">ACL 2024</span>
-    </div>
-    <a class="card-link" href="https://arxiv.org/abs/2404.07103" target="_blank">Graph Chain-of-Thought: Augmenting Large Language Models by Reasoning on Graphs</a>
-    <div class="card-meta">arXiv:2404.07103</div>
-    <div class="card-desc">Introduces graph-CoT where LLMs explicitly trace reasoning chains over KG nodes, improving interpretability and accuracy.</div>
-  </div>
-
-  <div class="card" data-tags="integration">
-    <div class="card-header">
-      <div class="card-tags"><span class="tag tag-integration">Integration</span></div>
-      <span class="card-venue">ACL 2024</span>
-    </div>
-    <a class="card-link" href="https://arxiv.org/abs/2311.13314" target="_blank">Mitigating LLM Hallucinations via Autonomous KG-based Retrofitting</a>
-    <div class="card-meta">arXiv:2311.13314</div>
-    <div class="card-desc">Post-generation retrofitting that autonomously identifies and corrects LLM hallucinations using KG triple verification.</div>
-  </div>
-
-  <!-- ── MEDICAL ── -->
-  <div class="card" data-tags="medical">
-    <div class="card-header">
-      <div class="card-tags"><span class="tag tag-medical">Medical</span></div>
-      <span class="card-venue">CVPR 2025</span>
-    </div>
-    <a class="card-link" href="https://arxiv.org/abs/2408.04187" target="_blank">Medical Graph RAG: Towards Safe Medical LLM via Graph Retrieval-Augmented Generation</a>
-    <div class="card-meta">arXiv:2408.04187</div>
-    <div class="card-desc">Builds patient-specific medical KGs for safe, grounded clinical reasoning, reducing hallucination in high-stakes settings.</div>
-  </div>
-
-  <div class="card" data-tags="medical">
-    <div class="card-header">
-      <div class="card-tags"><span class="tag tag-medical">Medical</span></div>
-      <span class="card-venue">2025</span>
-    </div>
-    <a class="card-link" href="https://arxiv.org/abs/2502.04413" target="_blank">MedRAG: Enhancing RAG with KG-Elicited Reasoning for Healthcare Copilot</a>
-    <div class="card-meta">arXiv:2502.04413</div>
-    <div class="card-desc">Healthcare copilot that elicits structured medical KG reasoning to answer complex clinical questions with citations.</div>
-  </div>
-
-  <!-- ── CODE ── -->
-  <div class="card" data-tags="code">
-    <div class="card-header">
-      <div class="card-tags"><span class="tag tag-code">Code</span></div>
-      <span class="card-venue">2024</span>
-    </div>
-    <a class="card-link" href="https://arxiv.org/abs/2406.07003" target="_blank">GraphCoder: Enhancing Repo-Level Code Completion via Code Context Graph-based Retrieval</a>
-    <div class="card-meta">arXiv:2406.07003</div>
-    <div class="card-desc">Builds a code context graph over repositories and uses graph retrieval to provide precise context for LLM-based code completion.</div>
-  </div>
-
-  <div class="card" data-tags="code">
-    <div class="card-header">
-      <div class="card-tags"><span class="tag tag-code">Code</span></div>
-      <span class="card-venue">2024</span>
-    </div>
-    <a class="card-link" href="https://arxiv.org/abs/2408.03910" target="_blank">CodexGraph: Bridging LLMs and Code Repositories via Code Graph Databases</a>
-    <div class="card-meta">arXiv:2408.03910</div>
-    <div class="card-desc">Uses graph databases to model code structure, enabling LLMs to perform precise, structure-aware repository-level code tasks.</div>
-  </div>
-
-</div>
-
+<div class="grid" id="card-grid"></div>
 <div class="no-results" id="no-results">No papers found matching your search.</div>
 
 <footer>
@@ -505,31 +79,216 @@
 </footer>
 
 <script>
-  let activeFilter = 'all';
+const papers = [
+  // ── SURVEYS ──
+  { tags:["survey"], venue:"arXiv 2025", title:"Retrieval-Augmented Generation with Graphs (GraphRAG)", url:"https://arxiv.org/abs/2501.00309", desc:"Comprehensive survey covering knowledge organization, retrieval strategies, and LLM integration in GraphRAG pipelines." },
+  { tags:["survey"], venue:"arXiv 2024", title:"Graph Retrieval-Augmented Generation: A Survey", url:"https://arxiv.org/abs/2408.08921", desc:"Systematic survey on how graph structures improve RAG pipelines for LLMs across diverse downstream tasks." },
+  { tags:["survey"], venue:"AIxSET 2024", title:"Graph Retrieval-Augmented Generation for LLMs: A Survey", url:"https://papers.ssrn.com/sol3/Delivery.cfm?abstractid=4895062", desc:"Survey examining graph-enhanced RAG frameworks for large language models with taxonomy and future directions." },
 
-  function setFilter(tag, btn) {
-    activeFilter = tag;
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    applyFilters();
-  }
+  // ── KNOWLEDGE ORGANIZATION — INDEXING ──
+  { tags:["knowledge"], venue:"arXiv 2025", title:"LinearRAG: Linear Graph Retrieval Augmented Generation on Large-scale Corpora", url:"https://arxiv.org/abs/2510.10114", desc:"Efficient linear graph-based RAG framework designed to scale across large document corpora." },
+  { tags:["knowledge"], venue:"EMNLP 2025", title:"Don't Forget the Base Retriever! A Low-Resource Graph-based Retriever for Multi-hop QA", url:"https://aclanthology.org/2025.emnlp-industry.174/", desc:"Low-resource graph retriever that complements base retrievers for multi-hop question answering tasks." },
+  { tags:["knowledge"], venue:"arXiv 2025", title:"Query-Centric Graph Retrieval Augmented Generation", url:"https://arxiv.org/abs/2509.22009", desc:"Query-centric approach that dynamically builds and retrieves subgraphs aligned with the user query." },
+  { tags:["knowledge"], venue:"arXiv 2025", title:"Multi-Agent GraphRAG: A Text-to-Cypher Framework for Labeled Property Graphs", url:"https://arxiv.org/abs/2510.09156", desc:"Multi-agent system that translates natural language to Cypher queries over labeled property graphs for RAG." },
+  { tags:["knowledge","medical"], venue:"arXiv 2025", title:"Grounded by Experience: Generative Healthcare Prediction Augmented with Hierarchical Agentic Retrieval", url:"https://arxiv.org/abs/2511.13293", desc:"Hierarchical agentic retrieval system for healthcare prediction grounded in structured medical knowledge graphs." },
+  { tags:["knowledge"], venue:"ICML 2025", title:"HippoRAG2: From RAG to Memory — Non-Parametric Continual Learning for LLMs", url:"https://arxiv.org/abs/2502.14802", desc:"Extends HippoRAG with non-parametric continual learning, enabling LLMs to retain and update knowledge without retraining." },
+  { tags:["knowledge"], venue:"arXiv 2025", title:"PersonaAgent with GraphRAG: Community-Aware Knowledge Graphs for Personalized LLM", url:"https://arxiv.org/abs/2511.17467", desc:"Builds community-aware personal knowledge graphs with GraphRAG to power personalized LLM experiences." },
+  { tags:["knowledge"], venue:"arXiv 2025", title:"E²GraphRAG: Streamlining Graph-based RAG for High Efficiency and Effectiveness", url:"https://arxiv.org/abs/2505.24226", desc:"Efficiency-focused GraphRAG framework that reduces computational overhead while maintaining high retrieval quality." },
+  { tags:["knowledge"], venue:"arXiv 2025", title:"DIGIMON: A Unified and Modular Graph-based RAG Framework", url:"https://github.com/JayLZhou/GraphRAG", desc:"Modular GraphRAG framework providing plug-and-play components for indexing, retrieval, and generation." },
+  { tags:["knowledge"], venue:"arXiv 2025", title:"ArchRAG: Attributed Community-based Hierarchical Retrieval-Augmented Generation", url:"https://arxiv.org/abs/2502.09891", desc:"Hierarchical community-based indexing for GraphRAG with rich semantic node attributes for improved retrieval." },
+  { tags:["knowledge"], venue:"arXiv 2025", title:"KET-RAG: A Cost-Efficient Multi-Granular Indexing Framework for Graph-RAG", url:"https://arxiv.org/abs/2502.09304", desc:"Multi-granular graph indexing that balances cost and retrieval quality for large-scale GraphRAG applications." },
+  { tags:["knowledge"], venue:"arXiv 2025", title:"PIKE-RAG: sPecIalized KnowledgE and Rationale Augmented Generation", url:"https://arxiv.org/abs/2501.11551", desc:"Augments RAG with specialized knowledge and rationale graphs to improve reasoning in domain-specific QA." },
+  { tags:["knowledge"], venue:"EMNLP Findings 2025", title:"Retrieval-Augmented Generation with Hierarchical Knowledge", url:"https://arxiv.org/abs/2503.10150", desc:"Hierarchical knowledge structure for RAG that organizes documents at multiple abstraction levels for better retrieval." },
+  { tags:["knowledge"], venue:"arXiv 2024", title:"KAG: Boosting LLMs in Professional Domains via Knowledge Augmented Generation", url:"https://arxiv.org/abs/2409.13731", desc:"Knowledge Augmented Generation combining logical reasoning and semantic retrieval for domain-specific LLM tasks." },
+  { tags:["knowledge"], venue:"arXiv 2024", title:"OG-RAG: Ontology-Grounded Retrieval-Augmented Generation for LLMs", url:"https://arxiv.org/abs/2412.15235", desc:"Grounds RAG retrieval in formal ontologies to improve precision and consistency of knowledge access." },
+  { tags:["knowledge"], venue:"arXiv 2024", title:"GRAG: Graph Retrieval-Augmented Generation", url:"https://arxiv.org/abs/2405.16506", desc:"Core GraphRAG framework that retrieves graph substructures as context for LLM-based generation tasks." },
+  { tags:["knowledge"], venue:"arXiv 2024", title:"Empowering LLMs to Set up a Knowledge Retrieval Indexer via Self-Learning", url:"https://arxiv.org/abs/2405.16933", desc:"LLMs autonomously construct and refine graph-based retrieval indexes through a self-learning mechanism." },
+  { tags:["knowledge"], venue:"ICLR 2024", title:"RAPTOR: Recursive Abstractive Processing for Tree-Organized Retrieval", url:"https://arxiv.org/abs/2401.18059", desc:"Recursively builds a tree of summaries enabling retrieval at multiple abstraction levels for complex QA." },
+  { tags:["knowledge"], venue:"AAAI 2024", title:"Knowledge Graph Prompting for Multi-Document Question Answering", url:"https://dl.acm.org/doi/10.1609/aaai.v38i17.29889", desc:"Constructs KGs from multiple documents and uses graph prompting to guide LLM multi-document QA." },
+  { tags:["knowledge"], venue:"NeurIPS 2023", title:"Avis: Autonomous Visual Information Seeking with LLM Agent", url:"https://openreview.net/forum?id=7EMphtUgCI", desc:"LLM agent that autonomously seeks visual information using knowledge graphs to answer visual questions." },
+  { tags:["knowledge"], venue:"CoRL 2023", title:"SayPlan: Grounding LLMs using 3D Scene Graphs for Scalable Robot Task Planning", url:"https://proceedings.mlr.press/v229/rana23a/rana23a.pdf", desc:"Grounds robot task planning in 3D scene graphs, enabling scalable long-horizon planning with LLMs." },
+  { tags:["knowledge"], venue:"arXiv 2020", title:"Answering Complex Open-Domain Questions with Multi-Hop Dense Retrieval", url:"https://arxiv.org/abs/2009.12756", desc:"Multi-hop dense retrieval framework that iteratively retrieves supporting documents for complex open-domain QA." },
+  { tags:["knowledge"], venue:"arXiv 2019", title:"Knowledge Guided Text Retrieval and Reading for Open Domain Question Answering", url:"https://arxiv.org/abs/1911.03868", desc:"Early work using knowledge graphs to guide document retrieval and reading comprehension for ODQA." },
 
-  function applyFilters() {
-    const query = document.getElementById('search').value.toLowerCase();
-    let visible = 0;
-    document.querySelectorAll('.card').forEach(card => {
-      const tags = card.getAttribute('data-tags');
-      const text = card.innerText.toLowerCase();
-      const tagMatch = activeFilter === 'all' || tags.includes(activeFilter);
-      const textMatch = text.includes(query);
-      const show = tagMatch && textMatch;
-      card.style.display = show ? 'block' : 'none';
-      if (show) visible++;
-    });
-    document.getElementById('visible-count').textContent = visible;
-    document.getElementById('no-results').style.display = visible === 0 ? 'block' : 'none';
-  }
+  // ── KG CONSTRUCTION FROM CORPUS ──
+  { tags:["knowledge"], venue:"AAAI 2026", title:"You Don't Need Pre-built Graphs for RAG: RAG with Adaptive Reasoning Structures", url:"https://arxiv.org/abs/2508.06105", desc:"Adaptively constructs reasoning graph structures at query time, eliminating the need for offline KG construction." },
+  { tags:["knowledge"], venue:"arXiv 2025", title:"AutoGraph-R1: End-to-End Reinforcement Learning for Knowledge Graph Construction", url:"https://arxiv.org/abs/2510.15339", desc:"Uses RL to train an end-to-end KG construction model directly optimized for downstream RAG performance." },
+  { tags:["knowledge"], venue:"arXiv 2025", title:"AGRAG: Advanced Graph-based Retrieval-Augmented Generation for LLMs", url:"https://arxiv.org/abs/2511.05549", desc:"Advanced GraphRAG framework with improved graph construction and retrieval strategies for LLMs." },
+  { tags:["knowledge"], venue:"EMNLP 2025", title:"MaGiX: Multi-Granular Adaptive Graph Intelligence for Cross-Lingual RAG", url:"https://aclanthology.org/anthology-files/anthology-files/pdf/findings/2025.findings-emnlp.279.pdf", desc:"Multi-granular adaptive graph intelligence framework that enhances cross-lingual RAG performance." },
+  { tags:["knowledge"], venue:"CIKM 2025", title:"Context-Aware Fine-Grained Graph RAG for Query-Focused Summarization", url:"https://dl.acm.org/doi/10.1145/3746252.3760935", desc:"Fine-grained GraphRAG approach that incorporates query context for improved summarization quality." },
+  { tags:["knowledge"], venue:"CIKM 2025", title:"DocPolicyKG: LLM-Based KG Construction from Chinese Policy Documents", url:"https://dl.acm.org/doi/abs/10.1145/3746252.3760904", desc:"Lightweight LLM-based pipeline for constructing knowledge graphs from Chinese government policy documents." },
+  { tags:["knowledge"], venue:"arXiv 2025", title:"SUBQRAG: Sub-Question Driven Dynamic Graph RAG", url:"https://arxiv.org/abs/2510.07718", desc:"Decomposes complex queries into sub-questions that dynamically drive graph traversal for multi-hop RAG." },
+  { tags:["knowledge"], venue:"arXiv 2025", title:"Ontology Learning and KG Construction: Impact on RAG Performance", url:"https://arxiv.org/abs/2511.05991", desc:"Comparative study of ontology learning and KG construction approaches and their effects on RAG quality." },
+  { tags:["knowledge"], venue:"NeurIPS 2025", title:"GFM-RAG: Graph Foundation Model for Retrieval Augmented Generation", url:"https://arxiv.org/abs/2502.01113", desc:"Graph foundation model pre-trained across diverse KGs enabling zero-shot generalization for GraphRAG retrieval." },
+  { tags:["knowledge"], venue:"arXiv 2025", title:"G-reasoner: Foundation Models for Unified Reasoning over Graph-structured Knowledge", url:"https://arxiv.org/abs/2509.24276", desc:"Unified foundation model for reasoning over heterogeneous graph-structured knowledge sources." },
+  { tags:["knowledge","medical"], venue:"CVPR 2025", title:"Medical Graph RAG: Towards Safe Medical LLM via Graph Retrieval-Augmented Generation", url:"https://arxiv.org/abs/2408.04187", desc:"Builds patient-specific medical KGs for safe, grounded clinical reasoning, reducing hallucination in high-stakes settings." },
+  { tags:["knowledge"], venue:"arXiv 2025", title:"Youtu-GraphRAG: Vertically Unified Agents for Graph Retrieval-Augmented Complex Reasoning", url:"https://arxiv.org/abs/2508.19855", desc:"Vertically unified multi-agent GraphRAG system for complex multi-step reasoning tasks." },
+  { tags:["knowledge","medical"], venue:"arXiv 2025", title:"MedRAG: Enhancing RAG with KG-Elicited Reasoning for Healthcare Copilot", url:"https://arxiv.org/abs/2502.04413", desc:"Healthcare copilot that elicits structured medical KG reasoning to answer complex clinical questions with citations." },
+  { tags:["knowledge"], venue:"arXiv 2025", title:"PathRAG: Pruning Graph-based RAG with Relational Paths", url:"https://arxiv.org/abs/2502.14902", desc:"Prunes irrelevant graph paths during retrieval to improve precision and reduce noise in GraphRAG pipelines." },
+  { tags:["knowledge"], venue:"EDBT 2025", title:"DBCopilot: Natural Language Querying over Massive Databases via Schema Routing", url:"https://openproceedings.org/2025/conf/edbt/paper-209.pdf", desc:"Routes natural language queries through database schema graphs for accurate SQL generation over large databases." },
+  { tags:["knowledge"], venue:"arXiv 2024", title:"From Local to Global: A Graph RAG Approach to Query-Focused Summarization", url:"https://arxiv.org/abs/2404.16130", desc:"The seminal Microsoft GraphRAG paper. Community-based KG construction from text for global query-focused summarization." },
+  { tags:["knowledge"], venue:"EMNLP 2024", title:"Structure Guided Prompt: Instructing LLMs in Multi-Step Reasoning via Graph Structure", url:"https://aclanthology.org/2024.emnlp-main.528.pdf", desc:"Uses text graph structure to guide LLM prompts for multi-step reasoning, improving structured problem solving." },
+  { tags:["knowledge"], venue:"EMNLP Findings 2024", title:"GraphReader: Building Graph-based Agent to Enhance Long-Context Abilities of LLMs", url:"https://aclanthology.org/2024.findings-emnlp.746/", desc:"Graph-based agent that navigates document graphs to extend LLM context handling for long documents." },
+  { tags:["knowledge"], venue:"SIGIR 2024", title:"Retrieval-Augmented Generation with KGs for Customer Service QA", url:"https://dl.acm.org/doi/abs/10.1145/3626772.3661370", desc:"Applies KG-enhanced RAG for customer service QA, improving answer accuracy and consistency at scale." },
+  { tags:["knowledge"], venue:"arXiv 2024", title:"DynaGRAG: Exploring Topology of Information for Language Understanding in Graph RAG", url:"https://arxiv.org/abs/2412.18644", desc:"Dynamically explores graph topology to improve language understanding and generation in GraphRAG systems." },
+  { tags:["knowledge"], venue:"arXiv 2024", title:"FastRAG: Retrieval Augmented Generation for Semi-structured Data", url:"https://arxiv.org/abs/2411.13773", desc:"Efficient RAG framework for semi-structured data using graph representations to enable fast, accurate retrieval." },
+  { tags:["knowledge"], venue:"TechRxiv 2024", title:"LuminiRAG: Vision-Enhanced Graph RAG for Multi-Modal Document Understanding", url:"https://www.techrxiv.org/users/867713/articles/1248304-luminirag-vision-enhanced-graph-rag-for-complex-multi-modal-document-understanding", desc:"Extends GraphRAG with vision capabilities for understanding complex multi-modal documents." },
+  { tags:["knowledge"], venue:"BigData 2023", title:"AutoKG: Efficient Automated Knowledge Graph Generation for Language Models", url:"https://ieeexplore.ieee.org/abstract/document/10386454", desc:"Automated pipeline for generating knowledge graphs from unstructured text to support language model augmentation." },
+  { tags:["knowledge"], venue:"ACL 2019", title:"Using Local KG Construction to Scale Seq2Seq Models to Multi-Document Inputs", url:"https://aclanthology.org/D19-1428.pdf", desc:"Early approach to scaling seq2seq models using locally constructed knowledge graphs over multiple documents." },
+  { tags:["knowledge"], venue:"SIGIR 2019", title:"Answering Complex Questions by Joining Multi-Document Evidence with Quasi Knowledge Graphs", url:"https://dl.acm.org/doi/10.1145/3331184.3331252", desc:"Constructs quasi-KGs by joining evidence across documents for complex multi-hop question answering." },
+
+  // ── GRAPHRAG WITH EXISTING KGs ──
+  { tags:["retrieval"], venue:"arXiv 2025", title:"Detecting Hallucinations in Graph RAG via Attention Patterns and Semantic Alignment", url:"https://arxiv.org/abs/2512.09148", desc:"Detects GraphRAG hallucinations by analyzing attention patterns and semantic alignment between retrieved graphs and output." },
+  { tags:["retrieval"], venue:"arXiv 2025", title:"Inference Scaled GraphRAG: Improving Multi-Hop QA on Knowledge Graphs", url:"https://arxiv.org/abs/2506.19967", desc:"Scales inference compute in GraphRAG to improve multi-hop question answering performance over KGs." },
+  { tags:["retrieval"], venue:"AAAI 2025", title:"LightPROF: A Lightweight Reasoning Framework for LLMs on Knowledge Graphs", url:"https://arxiv.org/abs/2504.03137", desc:"Lightweight KG reasoning framework that decomposes complex queries into efficient graph traversal steps." },
+  { tags:["retrieval"], venue:"ICLR 2025", title:"Simple is Effective: The Roles of Graphs and LLMs in KG-Based RAG", url:"https://openreview.net/forum?id=JvkuZZ04O7", desc:"Studies graph vs LLM contribution in KG-based RAG; shows simple retrievers often match complex methods." },
+  { tags:["retrieval"], venue:"arXiv 2025", title:"Empowering GraphRAG with Knowledge Filtering and Integration", url:"https://arxiv.org/abs/2503.13804", desc:"Adds a knowledge filtering stage to GraphRAG to remove noisy graph context before LLM generation." },
+  { tags:["retrieval"], venue:"arXiv 2024", title:"StructRAG: Boosting Knowledge Intensive Reasoning via Inference-time Hybrid Information Structurization", url:"https://arxiv.org/abs/2410.08815", desc:"Structurizes retrieved information at inference time into tables, graphs, or lists best suited for each query." },
+  { tags:["retrieval"], venue:"ICLR 2024", title:"Reasoning on Graphs: Faithful and Interpretable LLM Reasoning", url:"https://openreview.net/forum?id=ZGNWW7xZ6Q", desc:"Framework for faithful multi-hop reasoning by grounding LLM inference steps on explicit KG subgraph paths." },
+  { tags:["retrieval"], venue:"AAAI 2024", title:"Mitigating LLM Hallucinations via Autonomous KG-based Retrofitting", url:"https://arxiv.org/abs/2311.13314", desc:"Post-generation retrofitting that autonomously identifies and corrects LLM hallucinations using KG triple verification." },
+  { tags:["retrieval"], venue:"ICLR 2024", title:"Think-on-Graph: Deep and Responsible Reasoning of LLMs on Knowledge Graphs", url:"https://arxiv.org/abs/2307.07697", desc:"LLMs iteratively explore KG paths via beam search, grounding multi-hop reasoning in structured knowledge." },
+  { tags:["retrieval","medical"], venue:"Bioinformatics 2024", title:"Biomedical KG-Enhanced Prompt Generation for Large Language Models", url:"https://academic.oup.com/bioinformatics/article/40/9/btae560/7759620", desc:"Generates KG-enhanced prompts from biomedical knowledge graphs to improve LLM accuracy on clinical tasks." },
+  { tags:["retrieval"], venue:"NeurIPS 2024", title:"KnowGPT: Knowledge Graph based PrompTing for Large Language Models", url:"https://openreview.net/forum?id=PacBluO5m7", desc:"Injects structured KG triples into LLM prompts dynamically, improving factual grounding without fine-tuning." },
+  { tags:["retrieval"], venue:"ACL Findings 2024", title:"Knowledge Graph-Enhanced Large Language Models via Path Selection", url:"https://aclanthology.org/2024.findings-acl.376/", desc:"Selects the most relevant KG paths for LLM augmentation, improving multi-hop reasoning accuracy." },
+  { tags:["retrieval","medical"], venue:"IEEE VIS 2024", title:"KNOWNET: Guided Health Information Seeking from LLMs via KG Integration", url:"https://arxiv.org/abs/2407.13598", desc:"Interactive visual system for guided health information seeking that integrates KGs with LLM responses." },
+  { tags:["retrieval","medical"], venue:"CoLM 2024", title:"ProLLM: Protein Chain-of-Thoughts Enhanced LLM for Protein-Protein Interaction Prediction", url:"https://openreview.net/forum?id=2nTzomzjjb", desc:"Enhances LLMs with protein KG chain-of-thought reasoning for accurate protein-protein interaction prediction." },
+  { tags:["retrieval"], venue:"arXiv 2024", title:"LEGO-GraphRAG: Modularizing Graph-based RAG for Design Space Exploration", url:"https://arxiv.org/abs/2411.05844", desc:"Modular GraphRAG framework that decouples indexing, retrieval, and generation for systematic design space exploration." },
+  { tags:["retrieval"], venue:"arXiv 2024", title:"Think-on-Graph 2.0: Deep and Faithful LLM Reasoning with Knowledge-guided RAG", url:"https://arxiv.org/abs/2407.10805", desc:"Extends ToG with knowledge-guided retrieval combining parametric and non-parametric knowledge for deeper reasoning." },
+
+  // ── HYBRID GraphRAG ──
+  { tags:["retrieval"], venue:"NAACL 2025", title:"Knowledge Graph-Guided Retrieval Augmented Generation", url:"https://arxiv.org/abs/2502.06864", desc:"Hybrid framework that uses KG structure to guide dense retrieval, combining symbolic and neural approaches." },
+  { tags:["retrieval"], venue:"ACL Findings 2024", title:"HybGRAG: Hybrid RAG on Textual and Relational Knowledge Bases", url:"https://arxiv.org/abs/2412.16311", desc:"Unified retrieval framework over both unstructured text and relational KBs for comprehensive knowledge access." },
+  { tags:["retrieval"], venue:"arXiv 2024", title:"Graph of Records: Boosting RAG for Long-context Summarization with Graphs", url:"https://arxiv.org/abs/2410.11001", desc:"Constructs a graph of document records to improve RAG for long-context, multi-document summarization tasks." },
+  { tags:["retrieval","code"], venue:"arXiv 2024", title:"CodexGraph: Bridging LLMs and Code Repositories via Code Graph Databases", url:"https://arxiv.org/abs/2408.03910", desc:"Models code repository structure as a graph database, enabling LLMs to perform precise structure-aware code tasks." },
+
+  // ── RETRIEVAL — SIMILARITY BASED ──
+  { tags:["retrieval"], venue:"AAAI 2024", title:"StructuGraphRAG: Structured Document-Informed KGs for RAG", url:"https://ojs.aaai.org/index.php/AAAI-SS/article/view/31798", desc:"Builds structured KGs from documents to serve as an information-dense retrieval source for LLM generation." },
+  { tags:["retrieval"], venue:"arXiv 2024", title:"G-Retriever: Retrieval-Augmented Generation for Textual Graph Understanding and QA", url:"https://arxiv.org/abs/2402.07630", desc:"Combines GNNs with LLMs for QA over textual graphs via soft prompting and prize-collecting Steiner tree retrieval." },
+  { tags:["retrieval","medical"], venue:"arXiv 2024", title:"CancerKG.ORG: A Web-scale KG-LLM Hybrid for Cancer Treatment Assistance", url:"https://arxiv.org/abs/2501.00223", desc:"Web-scale interactive KG-LLM system for verifiable and personalized cancer treatment and care guidance." },
+  { tags:["retrieval"], venue:"arXiv 2024", title:"How to Make LLMs Strong Node Classifiers?", url:"https://arxiv.org/abs/2410.02296", desc:"Explores how to leverage LLMs effectively as node classifiers on textual attribute graphs." },
+
+  // ── RETRIEVAL — LOGICAL REASONING BASED ──
+  { tags:["retrieval"], venue:"CIKM 2024", title:"RD-P: A Trustworthy Retrieval-Augmented Prompter with KGs for LLMs", url:"https://dl.acm.org/doi/10.1145/3627673.3679659", desc:"Trustworthy RAG prompter that uses KG-based evidence to generate reliable and faithful LLM responses." },
+  { tags:["retrieval"], venue:"arXiv 2024", title:"RuleRAG: Rule-Guided Retrieval-Augmented Generation for Question Answering", url:"https://arxiv.org/abs/2410.22353", desc:"Augments RAG with logical rules extracted from KGs to guide retrieval and constrain LLM generation." },
+  { tags:["retrieval"], venue:"LHB 2024", title:"Intelligent QA for Water Conservancy via KG and LLM Collaboration", url:"https://www.tandfonline.com/doi/full/10.1080/27678490.2024.2397337", desc:"Domain-specific KG and LLM collaboration system for intelligent QA in water conservancy project inspection." },
+  { tags:["retrieval"], venue:"arXiv 2024", title:"RiTeK: A Dataset for LLMs Complex Reasoning over Textual Knowledge Graphs", url:"https://arxiv.org/abs/2410.13987", desc:"Benchmark dataset for evaluating LLM complex reasoning capabilities over textual knowledge graphs." },
+
+  // ── RETRIEVAL — LLM BASED ──
+  { tags:["retrieval"], venue:"ACML 2024", title:"Enhancing Textbook Question Answering with KG-Augmented LLMs", url:"https://openreview.net/forum?id=ATiIqCCqR2", desc:"Augments LLMs with textbook knowledge graphs to improve structured educational question answering." },
+  { tags:["retrieval"], venue:"arXiv 2024", title:"LightRAG: Simple and Fast Retrieval-Augmented Generation", url:"https://arxiv.org/abs/2410.05779", desc:"Lightweight GraphRAG integrating dual-level (local + global) graph retrieval for fast, scalable QA." },
+  { tags:["retrieval","medical"], venue:"arXiv 2024", title:"MEG: Medical Knowledge-Augmented LLMs for Question Answering", url:"https://arxiv.org/abs/2411.03883", desc:"Medical knowledge graph augmentation for LLMs that improves accuracy on clinical and biomedical QA tasks." },
+
+  // ── RETRIEVAL — GNN BASED ──
+  { tags:["retrieval"], venue:"arXiv 2025", title:"CG-RAG: Research Question Answering by Citation Graph Retrieval-Augmented LLMs", url:"https://arxiv.org/abs/2501.15067", desc:"Uses citation graphs to retrieve relevant research context for LLM-based scientific question answering." },
+  { tags:["retrieval"], venue:"arXiv 2024", title:"Advanced RAG Models with Graph Structures: Optimizing Complex Knowledge Reasoning", url:"https://arxiv.org/abs/2411.03572", desc:"Applies advanced graph structures to RAG for optimizing complex multi-step knowledge reasoning and generation." },
+  { tags:["retrieval"], venue:"arXiv 2024", title:"Language Models are Graph Learners", url:"https://arxiv.org/abs/2410.02296", desc:"Demonstrates LLMs can effectively learn graph structure and perform graph reasoning tasks without specialized GNNs." },
+  { tags:["retrieval"], venue:"arXiv 2024", title:"Graph Neural Network Enhanced Retrieval for QA of LLMs", url:"https://arxiv.org/abs/2406.06572", desc:"Uses GNNs to score and rank retrieved graph substructures before passing context to LLMs for multi-hop QA." },
+  { tags:["retrieval"], venue:"arXiv 2024", title:"KG-Augmented Language Models for Knowledge-Grounded Dialogue Generation", url:"https://arxiv.org/abs/2305.18846", desc:"Augments dialogue LMs with KG triples for knowledge-grounded, factually consistent conversation generation." },
+
+  // ── RETRIEVAL — MULTI-ROUND ──
+  { tags:["retrieval"], venue:"arXiv 2024", title:"Graph Chain-of-Thought: Augmenting LLMs by Reasoning on Graphs", url:"https://arxiv.org/abs/2404.07103", desc:"Graph-CoT framework where LLMs explicitly trace reasoning chains over KG nodes for interpretable multi-hop reasoning." },
+  { tags:["retrieval"], venue:"arXiv 2024", title:"Generative Subgraph Retrieval for KG-Grounded Dialog Generation", url:"https://arxiv.org/abs/2410.09350", desc:"Generatively retrieves relevant KG subgraphs to ground dialogue responses in structured knowledge." },
+
+  // ── RETRIEVAL — POST-RETRIEVAL ──
+  { tags:["retrieval"], venue:"ACL 2024", title:"Boosting Language Models Reasoning with Chain-of-Knowledge Prompting", url:"https://arxiv.org/abs/2306.06427", desc:"Post-retrieval prompting technique that chains KG knowledge into structured reasoning steps for LLMs." },
+  { tags:["retrieval"], venue:"ACL Findings 2024", title:"Call Me When Necessary: LLMs can Efficiently Reason over Structured Environments", url:"https://arxiv.org/abs/2403.08593", desc:"Adaptive KG retrieval that calls graph lookups only when necessary, reducing cost while preserving accuracy." },
+  { tags:["retrieval"], venue:"arXiv 2024", title:"Graph-constrained Reasoning: Faithful Reasoning on KGs with LLMs", url:"https://arxiv.org/abs/2410.13080", desc:"Constrains LLM decoding to valid KG paths via trie-based token constraints, eliminating hallucinated graph traversals." },
+
+  // ── INTEGRATION — FINE-TUNING ──
+  { tags:["integration"], venue:"arXiv 2025", title:"Large Language Models based Graph Convolution for Text-Attributed Networks", url:"https://openreview.net/forum?id=x5FfUvsLIE", desc:"Combines LLM text encoders with graph convolution networks for node classification on text-attributed graphs." },
+  { tags:["integration"], venue:"SIGIR 2024", title:"GraphGPT: Graph Instruction Tuning for Large Language Models", url:"https://dl.acm.org/doi/10.1145/3626772.3657775", desc:"Instruction-tuning framework that aligns LLMs with graph structural understanding via graph token injection." },
+  { tags:["integration"], venue:"AAAI 2024", title:"Exploring LLMs for Graph Data Understanding in Online Job Recommendations", url:"https://dl.acm.org/doi/10.1609/aaai.v38i8.28769", desc:"Fine-tunes LLMs on job recommendation graphs to improve path-level understanding for personalized suggestions." },
+  { tags:["integration"], venue:"arXiv 2024", title:"MuseGraph: Graph-oriented Instruction Tuning of LLMs for Generic Graph Mining", url:"https://arxiv.org/abs/2403.04780", desc:"Instruction-tunes LLMs on diverse graph mining tasks using graph-oriented path-level supervision signals." },
+  { tags:["integration"], venue:"WWW 2023", title:"Structure Pretraining and Prompt Tuning for Knowledge Graph Transfer", url:"https://dl.acm.org/doi/10.1145/3543507.3583301", desc:"Pretrain-then-prompt approach for transferring KG structural knowledge to downstream LLM-based tasks." },
+  { tags:["integration"], venue:"ICML 2024", title:"LLaGA: Large Language and Graph Assistant", url:"https://openreview.net/pdf?id=B48Pzc4oKi", desc:"Unified assistant that integrates graph structural understanding into LLMs for graph-text reasoning tasks." },
+  { tags:["integration"], venue:"KDD 2024", title:"GraphWiz: An Instruction-Following Language Model for Graph Problems", url:"https://graph-wiz.github.io/", desc:"Instruction-following LLM fine-tuned across diverse graph algorithm tasks for general graph problem solving." },
+  { tags:["integration"], venue:"AAAI 2024", title:"Graph Neural Prompting with Large Language Models", url:"https://dl.acm.org/doi/10.1609/aaai.v38i17.29875", desc:"Uses GNN-derived soft prompts to inject subgraph-level structural knowledge into frozen LLMs." },
+  { tags:["integration"], venue:"ACL Findings 2024", title:"Rho: Reducing Hallucination in Open-Domain Dialogues with Knowledge Grounding", url:"https://aclanthology.org/2023.findings-acl.275/", desc:"Grounds dialogue generation in KG subgraphs at the subgraph level to reduce hallucination in open-domain chat." },
+  { tags:["integration"], venue:"EACL Findings 2024", title:"Language is All a Graph Needs", url:"https://aclanthology.org/2024.findings-eacl.132.pdf", desc:"Demonstrates that graph tasks can be effectively solved by LLMs using purely language-based graph serialization." },
+
+  // ── INTEGRATION — IN-CONTEXT LEARNING ──
+  { tags:["integration"], venue:"KBS 2025", title:"Different Paths to the Same Destination: Diversifying LLMs for Multi-hop Open-Domain QA", url:"https://www.sciencedirect.com/science/article/abs/pii/S0950705124014230", desc:"Diversifies LLM reasoning paths over KGs for multi-hop open-domain QA to improve answer coverage." },
+  { tags:["integration"], venue:"ICLR 2024", title:"Chain-of-Knowledge: Grounding LLMs via Dynamic Knowledge Adapting over Heterogeneous Sources", url:"https://openreview.net/forum?id=cPgh4gWZlz", desc:"Dynamically adapts knowledge from heterogeneous sources including KGs into chain-of-thought reasoning prompts." },
+  { tags:["integration"], venue:"ACL Findings 2024", title:"Visual In-Context Learning for Large Vision-Language Models", url:"https://www.semanticscholar.org/paper/Visual-In-Context-Learning-for-Large-Models-Zhou-Li/b00d1028291ae64e9d7485a34ec5f1b7b5a37909", desc:"In-context learning framework for vision-language models using graph-structured visual exemplar selection." },
+  { tags:["integration"], venue:"NeurIPS 2023", title:"What Makes Good Examples for Visual In-Context Learning?", url:"https://proceedings.neurips.cc/paper_files/paper/2023/hash/398ae57ed4fda79d0781c65c926d667b-Abstract-Conference.html", desc:"Studies properties of effective visual ICL examples, with insights applicable to graph-structured retrieval." },
+  { tags:["integration"], venue:"ACL 2023", title:"Plan-and-Solve Prompting: Improving Zero-Shot CoT Reasoning by LLMs", url:"https://aclanthology.org/2023.acl-long.147.pdf", desc:"Zero-shot chain-of-thought prompting strategy that plans reasoning steps before solving, applicable to graph QA." },
+  { tags:["integration"], venue:"AAAI 2024", title:"When Do Program-of-Thought Works for Reasoning?", url:"https://dl.acm.org/doi/10.1609/aaai.v38i16.29721", desc:"Analyzes when program-of-thought prompting outperforms chain-of-thought for structured graph reasoning tasks." },
+  { tags:["integration"], venue:"ICLR 2022", title:"An Explanation of In-Context Learning as Implicit Bayesian Inference", url:"https://openreview.net/forum?id=RdJVFCHjUMI", desc:"Theoretical foundation for ICL as Bayesian inference, explaining why exemplar selection matters for graph-grounded tasks." },
+  { tags:["integration"], venue:"EMNLP 2023", title:"KnowledGPT: Enhancing LLMs with Retrieval and Storage Access on Knowledge Bases", url:"https://arxiv.org/abs/2308.11761", desc:"Augments LLMs with dynamic retrieval and write-back access to external knowledge bases for persistent grounding." },
+  { tags:["integration"], venue:"NeurIPS 2024", title:"Plan-on-Graph: Self-Correcting Adaptive Planning of LLMs on Knowledge Graphs", url:"https://arxiv.org/abs/2410.23875", desc:"Self-correcting planning framework where LLMs iteratively revise KG traversal plans based on retrieved evidence." },
+  { tags:["integration"], venue:"arXiv 2024", title:"Explore then Determine: A GNN-LLM Synergy Framework for Reasoning over KG", url:"https://arxiv.org/abs/2406.01145", desc:"GNN explores candidate KG subgraphs and LLM determines the final answer, combining complementary strengths." },
+  { tags:["integration"], venue:"ACL 2024", title:"CogMG: Collaborative Augmentation Between LLM and Knowledge Graph", url:"https://aclanthology.org/2024.acl-demos.35/", desc:"Bidirectional augmentation system where LLMs and KGs collaboratively improve each other's outputs." },
+
+  // ── BENCHMARKS ──
+  { tags:["benchmark"], venue:"arXiv 2025", title:"GraphRAG-Bench: Benchmark for Evaluating GraphRAG Systems", url:"https://arxiv.org/abs/2506.05690", desc:"Comprehensive benchmark for evaluating GraphRAG systems across diverse query types and knowledge graph structures." },
+  { tags:["benchmark"], venue:"arXiv 2025", title:"DIGIMON Benchmark: Large-scale GraphRAG Evaluation", url:"https://arxiv.org/abs/2503.04338", desc:"Large-scale evaluation framework for GraphRAG systems with diverse graph types and query complexities." },
+  { tags:["benchmark"], venue:"arXiv 2025", title:"PolyG: Polygon Graph Benchmark for GraphRAG Evaluation", url:"https://arxiv.org/abs/2504.02112", desc:"Evaluation suite for GraphRAG across polygonal knowledge graph types and multi-hop reasoning tasks." },
+  { tags:["benchmark"], venue:"arXiv 2015", title:"SimpleQuestion: Simple Question Answering Benchmark", url:"https://arxiv.org/abs/1506.02075", desc:"Classic single-hop KG QA benchmark using Freebase, widely used for evaluating KG retrieval systems." },
+  { tags:["benchmark"], venue:"EMNLP 2013", title:"WebQ: Web Questions Benchmark", url:"https://nlp.stanford.edu/pubs/semparseEMNLP13.pdf", desc:"Question answering benchmark collected from Google Suggest for evaluating KG-based QA systems." },
+  { tags:["benchmark"], venue:"COLING 2024", title:"Multihop-RAG: Multi-hop Reasoning Benchmark for RAG", url:"https://arxiv.org/abs/2401.15391", desc:"Benchmark specifically designed to evaluate multi-hop reasoning capabilities of RAG systems over KGs." },
+  { tags:["benchmark"], venue:"NAACL 2018", title:"CWQ: Complex Web Questions for Multi-hop KG Reasoning", url:"https://aclanthology.org/N18-1059/", desc:"Multi-hop complex question answering benchmark requiring compositional reasoning over Freebase." },
+  { tags:["benchmark"], venue:"AAAI 2018", title:"MetaQA: Multi-hop QA Benchmark over Movie Knowledge Graph", url:"https://arxiv.org/abs/1709.04071", desc:"1-3 hop QA benchmark over a movie KG for evaluating multi-hop graph retrieval and reasoning." },
+  { tags:["benchmark"], venue:"arXiv 2024", title:"CURD: Large-scale Complex QA Benchmark for RAG Evaluation", url:"https://arxiv.org/abs/2401.17043", desc:"Large-scale benchmark for evaluating RAG systems on complex, multi-document retrieval and generation tasks." },
+  { tags:["benchmark"], venue:"ACL 2022", title:"KQAPro: A Large-scale Dataset for Complex KG QA", url:"https://aclanthology.org/2022.acl-long.422/", desc:"Large-scale complex KG QA dataset with diverse question types requiring compositional reasoning over Wikidata." },
+  { tags:["benchmark"], venue:"ISWC 2019", title:"LC-QuAD v2: Large-scale Complex QA Dataset over Wikidata", url:"https://link.springer.com/chapter/10.1007/978-3-030-30796-7_5", desc:"Large complex QA dataset over Wikidata with diverse question templates for KG retrieval evaluation." },
+  { tags:["benchmark"], venue:"ISWC 2017", title:"LC-QuAD: A Large-scale Complex Question Answering Dataset", url:"https://dl.acm.org/doi/10.1007/978-3-319-68204-4_22", desc:"Original large complex QA benchmark over DBpedia for evaluating KG-based question answering systems." },
+  { tags:["benchmark"], venue:"arXiv 2024", title:"UltraDomain: Domain-Specific QA Benchmark for GraphRAG", url:"https://arxiv.org/abs/2409.05591", desc:"Domain-specific QA evaluation suite for testing GraphRAG systems in specialized professional domains." },
+  { tags:["benchmark"], venue:"arXiv 2024", title:"TutorQA: Educational QA Benchmark for KG-Augmented LLMs", url:"https://arxiv.org/abs/2407.10794", desc:"Educational question answering benchmark for evaluating KG-augmented LLMs in tutoring scenarios." },
+  { tags:["benchmark"], venue:"ACL 2023", title:"FACTKG: Fact Verification over Knowledge Graphs", url:"https://aclanthology.org/2023.acl-long.895.pdf", desc:"Benchmark for fact verification using knowledge graphs, testing GraphRAG faithfulness and hallucination detection." },
+  { tags:["benchmark"], venue:"COLING 2022", title:"Mintaka: A Complex, Natural, and Multilingual Dataset for KG QA", url:"https://aclanthology.org/2022.coling-1.138/", desc:"Complex multilingual KG QA dataset over Wikidata designed for real-world question answering evaluation." },
+  { tags:["benchmark"], venue:"WWW 2021", title:"GrailQA: Generalizable and Robust QA over Knowledge Bases", url:"https://dl.acm.org/doi/10.1145/3442381.3449992", desc:"KBQA benchmark testing generalization to unseen domains, entities, and relation compositions over Freebase." },
+  { tags:["benchmark"], venue:"ACL 2016", title:"WebQSP: Web Questions Semantic Parses Benchmark", url:"https://aclanthology.org/P16-2033.pdf", desc:"Semantic parse annotations for WebQ, enabling evaluation of KG query generation and retrieval systems." },
+];
+
+function buildCard(p) {
+  const tagHtml = p.tags.map(t => `<span class="tag tag-${t}">${tagLabel(t)}</span>`).join('');
+  return `
+    <div class="card" data-tags="${p.tags.join(' ')}">
+      <div class="card-top">
+        <div class="card-tags">${tagHtml}</div>
+        <span class="venue">${p.venue}</span>
+      </div>
+      <a class="title" href="${p.url}" target="_blank">${p.title}</a>
+      <div class="desc">${p.desc}</div>
+    </div>`;
+}
+
+function tagLabel(t) {
+  return { knowledge:'Knowledge Org', retrieval:'Retrieval', integration:'Integration', survey:'Survey', benchmark:'Benchmark', medical:'Medical', code:'Code' }[t] || t;
+}
+
+let activeFilter = 'all';
+
+function render() {
+  const grid = document.getElementById('card-grid');
+  grid.innerHTML = papers.map(buildCard).join('');
+  applyFilters();
+}
+
+function setFilter(tag, btn) {
+  activeFilter = tag;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  applyFilters();
+}
+
+function applyFilters() {
+  const query = document.getElementById('search').value.toLowerCase();
+  let visible = 0;
+  document.querySelectorAll('.card').forEach(card => {
+    const tags = card.getAttribute('data-tags');
+    const text = card.innerText.toLowerCase();
+    const tagMatch = activeFilter === 'all' || tags.includes(activeFilter);
+    const textMatch = !query || text.includes(query);
+    const show = tagMatch && textMatch;
+    card.style.display = show ? '' : 'none';
+    if (show) visible++;
+  });
+  document.getElementById('visible-count').textContent = visible;
+  document.getElementById('no-results').style.display = visible === 0 ? 'block' : 'none';
+}
+
+render();
 </script>
-
 </body>
 </html>
