@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Awesome GraphRAG</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #0d1117;
+      color: #e6edf3;
+      min-height: 100vh;
+    }
+
+    header {
+      text-align: center;
+      padding: 50px 20px 30px;
+      border-bottom: 1px solid #21262d;
+    }
+
+    header a.back {
+      display: inline-block;
+      margin-bottom: 20px;
+      color: #58a6ff;
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+
+    header a.back:hover { text-decoration: underline; }
+
+    header h1 {
+      font-size: 2.4rem;
+      background: linear-gradient(90deg, #3fb950, #58a6ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 10px;
+    }
+
+    header p {
+      color: #8b949e;
+      font-size: 1rem;
+      max-width: 650px;
+      margin: 0 auto;
+    }
+
+    .stats {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      padding: 20px;
+      font-size: 0.85rem;
+      color: #8b949e;
+    }
+
+    .stats span { color: #e6edf3; font-weight: 600; }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      padding: 10px 20px 0;
+    }
+
+    .controls input {
+      padding: 9px 14px;
+      border-radius: 8px;
+      border: 1px solid #30363d;
+      background: #161b22;
+      color: #e6edf3;
+      font-size: 0.95rem;
+      width: 320px;
+      outline: none;
+    }
+
+    .controls input:focus { border-color: #58a6ff; }
+
+    .filters {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      padding: 16px 20px 0;
+    }
+
+    .filter-btn {
+      padding: 5px 14px;
+      border-radius: 20px;
+      border: 1px solid #30363d;
+      background: transparent;
+      color: #8b949e;
+      cursor: pointer;
+      font-size: 0.82rem;
+      transition: all 0.2s;
+    }
+
+    .filter-btn.active, .filter-btn:hover {
+      background: #1a3a2a;
+      color: #3fb950;
+      border-color: #3fb950;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+      gap: 18px;
+      padding: 28px 40px;
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: #161b22;
+      border: 1px solid #21262d;
+      border-radius: 12px;
+      padding: 20px;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+
+    .card:hover {
+      border-color: #3fb950;
+      transform: translateY(-2px);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 10px;
+    }
+
+    .card-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+
+    .tag {
+      font-size: 0.72rem;
+      padding: 2px 9px;
+      border-radius: 20px;
+      font-weight: 500;
+    }
+
+    .tag-knowledge    { background: #1f3a5f; color: #58a6ff; }
+    .tag-retrieval    { background: #1a3a2a; color: #3fb950; }
+    .tag-integration  { background: #2a1a3a; color: #bc8cff; }
+    .tag-survey       { background: #3a2a1a; color: #e3b341; }
+    .tag-medical      { background: #3a1a2a; color: #f47067; }
+    .tag-code         { background: #1a2a3a; color: #79c0ff; }
+    .tag-multimodal   { background: #2a3a1a; color: #7ce38b; }
+
+    .card-venue {
+      font-size: 0.72rem;
+      padding: 2px 9px;
+      border-radius: 20px;
+      background: #21262d;
+      color: #8b949e;
+    }
+
+    .card-link {
+      font-size: 0.98rem;
+      font-weight: 600;
+      color: #e6edf3;
+      text-decoration: none;
+      display: block;
+      margin-bottom: 6px;
+      line-height: 1.4;
+    }
+
+    .card-link:hover { color: #3fb950; }
+
+    .card-meta {
+      font-size: 0.78rem;
+      color: #8b949e;
+      margin-bottom: 8px;
+    }
+
+    .card-desc {
+      font-size: 0.85rem;
+      color: #8b949e;
+      line-height: 1.55;
+    }
+
+    .no-results {
+      text-align: center;
+      color: #8b949e;
+      padding: 60px 20px;
+      font-size: 1rem;
+      display: none;
+    }
+
+    footer {
+      text-align: center;
+      padding: 40px 20px;
+      color: #8b949e;
+      font-size: 0.85rem;
+      border-top: 1px solid #21262d;
+      margin-top: 20px;
+    }
+
+    footer a { color: #58a6ff; text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<header>
+  <a class="back" href="../">← Back to Awesome AI Hub</a>
+  <h1>Awesome GraphRAG</h1>
+  <p>A curated collection of papers on Graph Retrieval-Augmented Generation — knowledge organization, retrieval, and integration with LLMs.</p>
+</header>
+
+<div class="stats">
+  <div><span id="visible-count">25</span> papers shown</div>
+  <div>Source: <a href="https://github.com/DEEP-PolyU/Awesome-GraphRAG" target="_blank" style="color:#58a6ff">DEEP-PolyU/Awesome-GraphRAG</a></div>
+</div>
+
+<div class="controls">
+  <input type="text" id="search" placeholder="Search papers, authors, venues..." oninput="applyFilters()" />
+</div>
+
+<div class="filters" id="filters">
+  <button class="filter-btn active" onclick="setFilter('all', this)">All</button>
+  <button class="filter-btn" onclick="setFilter('knowledge', this)">Knowledge Organization</button>
+  <button class="filter-btn" onclick="setFilter('retrieval', this)">Retrieval</button>
+  <button class="filter-btn" onclick="setFilter('integration', this)">Integration</button>
+  <button class="filter-btn" onclick="setFilter('survey', this)">Survey</button>
+  <button class="filter-btn" onclick="setFilter('medical', this)">Medical</button>
+  <button class="filter-btn" onclick="setFilter('code', this)">Code</button>
+</div>
+
+<div class="grid" id="card-grid">
+
+  <!-- ── SURVEY ── -->
+  <div class="card" data-tags="survey">
+    <div class="card-header">
+      <div class="card-tags"><span class="tag tag-survey">Survey</span></div>
+      <span class="card-venue">2025</span>
+    </div>
+    <a class="card-link" href="https://arxiv.org/abs/2501.00309" target="_blank">Retrieval-Augmented Generation with Graphs (GraphRAG)</a>
+    <div class="card-meta">arXiv:2501.00309</div>
+    <div class="card-desc">Comprehensive survey of GraphRAG methods covering knowledge organization, retrieval strategies, and LLM integration approaches.</div>
+  </div>
+
+  <div class="card" data-tags="survey">
+    <div class="card-header">
+      <div class="card-tags"><span class="tag tag-survey">Survey</span></div>
+      <span class="card-venue">2024</span>
+    </div>
+    <a class="card-link" href="https://arxiv.org/abs/2408.08921" target="_blank">Graph Retrieval-Augmented Generation: A Survey</a>
+    <div class="card-meta">arXiv:2408.08921</div>
+    <div class="card-desc">Systematic survey examining how graph structures improve RAG pipelines for LLMs across diverse downstream tasks.</div>
+  </div>
+
+  <!-- ── KNOWLEDGE ORGANIZATION ── -->
+  <div class="card" data-tags="knowledge">
+    <div class="card-header">
+      <div class="card-tags"><span class="tag tag-knowledge">Knowledge Organization</span></div>
+      <span class="card-venue">ICML 2025</span>
+    </div>
+    <a class="card-link" href="https://arxiv.org/abs/2502.14802" target="_blank">HippoRAG2: From RAG to Memory — Non-Parametric Continual Learning for LLMs</a>
+    <div class="card-meta">arXiv:2502.14802</div>
+    <div class="card-desc">Extends HippoRAG with non-parametric continual learning, enabling LLMs to retain and update knowledge without retraining.</div>
+  </div>
+
+  <div class="card" data-tags="knowledge">
+    <div class="card-header">
+      <div class="card-tags"><span class="tag tag-knowledge">Knowledge Organization</span></div>
+      <span class="card-venue">2024</span>
+    </div>
+    <a class="card-link" href="https://arxiv.org/abs/2404.16130" target="_blank">From Local to Global: A Graph RAG Approach to Query-Focused Summarization</a>
+    <div class="card-meta">Microsoft Research · arXiv:2404.16130</div>
+    <div class="card-desc">The seminal Microsoft GraphRAG paper. Builds a community-based knowledge graph from text corpora for global query-focused summarization.</div>
+  </div>
+
+  <div class="card" data-tags="knowledge">
+    <div class="card-header">
+      <div class="card-tags"><span class="tag tag-knowledge">Knowledge Organization</span></div>
+      <span class="card-venue">ICLR 2024</span>
+    </div>
+    <a class="card-link" href="https://arxiv.org/abs/2401.18059" target="_blank">RAPTOR: Recursive Abstractive Processing for Tree-Organized Retrieval</a>
+    <div class="card-meta">arXiv:2401.18059</div>
+    <div class="card-desc">Recursively builds a tree of summaries over documents enabling retrieval at multiple levels of abstraction for complex QA.</div>
+  </div>
+
+  <div class="card" data-tags="knowledge">
+    <div class="card-header">
+      <div class="card-tags"><span class="tag tag-knowledge">Knowledge Organization</span></div>
+      <span class="card-venue">2024</span>
+    </div>
+    <a class="card-link" href="https://arxiv.org/abs/2409.13731" target="_blank">KAG: Boosting LLMs in Professional Domains via Knowledge Augmented Generation</a>
+    <div class="card-meta">arXiv:2409.13731</div>
+    <div class="card-desc">Knowledge Augmented Generation framework combining logical reasoning and semantic retrieval for domain-specific LLM applications.</div>
+  </div>
+
+  <div class="card" data-tags="knowledge">
+    <div class="card-header">
+      <div class="card-tags"><span class="tag tag-knowledge">Knowledge Organization</span></div>
+      <span class="card-venue">NeurIPS 2025</span>
+    </div>
+    <a class="card-link" href="https://arxiv.org/abs/2502.01113" target="_blank">GFM-RAG: Graph Foundation Model for Retrieval Augmented Generation</a>
+    <div class="card-meta">arXiv:2502.01113</div>
+    <div class="card-desc">A graph foundation model pre-trained across diverse KGs that enables zero-shot generalization for GraphRAG retrieval tasks.</div>
+  </div>
+
+  <div class="card" data-tags="knowledge">
+    <div class="card-header">
+      <div class="card-tags"><span class="tag tag-knowledge">Knowledge Organization</span></div>
+      <span class="card-venue">2025</span>
+    </div>
+    <a class="card-link" href="https://arxiv.org/abs/2502.14902" target="_blank">PathRAG: Pruning Graph-based Retrieval Augmented Generation with Relational Paths</a>
+    <div class="card-meta">arXiv:2502.14902</div>
+    <div class="card-desc">Prunes irrelevant graph paths during retrieval to improve precision and reduce noise in GraphRAG pipelines.</div>
+  </div>
+
+  <div class="card" data-tags="knowledge">
+    <div class="card-header">
+      <div class="card-tags"><span class="tag tag-knowledge">Knowledge Organization</span></div>
+      <span class="card-venue">2025</span>
+    </div>
+    <a class="card-link" href="https://arxiv.org/abs/2502.09891" target="_blank">ArchRAG: Attributed Community-based Hierarchical Retrieval-Augmented Generation</a>
+    <div class="card-meta">arXiv:2502.09891</div>
+    <div class="card-desc">Hierarchical community-based indexing for GraphRAG that attributes graph nodes with rich semantic properties for improved retrieval.</div>
+  </div>
+
+  <!-- ── RETRIEVAL ── -->
+  <div class="card" data-tags="retrieval">
+    <div class="card-header">
+      <div class="card-tags"><span class="tag tag-retrieval">Retrieval</span></div>
+      <span class="card-venue">2024</span>
+    </div>
+    <a class="card-link" href="https://arxiv.org/abs/2410.05779" target="_blank">LightRAG: Simple and Fast Retrieval-Augmented Generation</a>
+    <div class="card-meta">arXiv:2410.05779</div>
+    <div class="card-desc">Lightweight GraphRAG framework that integrates dual-level (local + global) graph retrieval for fast, scalable question answering.</div>
+  </div>
+
+  <div class="card" data-tags="retrieval">
+    <div class="card-header">
+      <div class="card-tags"><span class="tag tag-retrieval">Retrieval</span></div>
+      <span class="card-venue">ICLR 2025</span>
+    </div>
+    <a class="card-link" href="https://arxiv.org/abs/2410.08815" target="_blank">Simple is Effective: The Roles of Graphs and LLMs in Knowledge-Graph-Based RAG</a>
+    <div class="card-meta">ICLR 2025</div>
+    <div class="card-desc">Studies the interplay between graph structure and LLM capabilities in KG-based RAG, showing simple retrievers often suffice.</div>
+  </div>
+
+  <div class="card" data-tags="retrieval">
+    <div class="card-header">
+      <div class="card-tags"><span class="tag tag-retrieval">Retrieval</span></div>
+      <span class="card-venue">ICLR 2024</span>
+    </div>
+    <a class="card-link" href="https://arxiv.org/abs/2307.07697" target="_blank">Think-on-Graph: Deep and Responsible Reasoning of LLMs on Knowledge Graphs</a>
+    <div class="card-meta">ICLR 2024</div>
+    <div class="card-desc">LLMs iteratively explore KG paths via beam search, grounding multi-hop reasoning in structured knowledge for faithfulness.</div>
+  </div>
+
+  <div class="card" data-tags="retrieval">
+    <div class="card-header">
+      <div class="card-tags"><span class="tag tag-retrieval">Retrieval</span></div>
+      <span class="card-venue">2024</span>
+    </div>
+    <a class="card-link" href="https://arxiv.org/abs/2407.10805" target="_blank">Think-on-Graph 2.0: Deep and Faithful LLM Reasoning with Knowledge-guided RAG</a>
+    <div class="card-meta">arXiv:2407.10805</div>
+    <div class="card-desc">Extends ToG with knowledge-guided retrieval that dynamically combines parametric and non-parametric knowledge for deeper reasoning.</div>
+  </div>
+
+  <div class="card" data-tags="retrieval">
+    <div class="card-header">
+      <div class="card-tags"><span class="tag tag-retrieval">Retrieval</span></div>
+      <span class="card-venue">2024</span>
+    </div>
+    <a class="card-link" href="https://arxiv.org/abs/2402.07630" target="_blank">G-Retriever: Retrieval-Augmented Generation for Textual Graph Understanding and QA</a>
+    <div class="card-meta">arXiv:2402.07630</div>
+    <div class="card-desc">Combines graph neural networks with LLMs for QA over textual graphs via soft prompting and subgraph retrieval.</div>
+  </div>
+
+  <div class="card" data-tags="retrieval">
+    <div class="card-header">
+      <div class="card-tags"><span class="tag tag-retrieval">Retrieval</span></div>
+      <span class="card-venue">2024</span>
+    </div>
+    <a class="card-link" href="https://arxiv.org/abs/2406.06572" target="_blank">Graph Neural Network Enhanced Retrieval for Question Answering of LLMs</a>
+    <div class="card-meta">arXiv:2406.06572</div>
+    <div class="card-desc">Uses GNNs to score and rank retrieved graph substructures before passing context to LLMs for multi-hop QA tasks.</div>
+  </div>
+
+  <div class="card" data-tags="retrieval">
+    <div class="card-header">
+      <div class="card-tags"><span class="tag tag-retrieval">Retrieval</span></div>
+      <span class="card-venue">2024</span>
+    </div>
+    <a class="card-link" href="https://arxiv.org/abs/2410.22353" target="_blank">RuleRAG: Rule-Guided Retrieval-Augmented Generation for Question Answering</a>
+    <div class="card-meta">arXiv:2410.22353</div>
+    <div class="card-desc">Augments RAG with logical rules extracted from KGs to guide retrieval and constrain LLM generation for structured QA.</div>
+  </div>
+
+  <div class="card" data-tags="retrieval">
+    <div class="card-header">
+      <div class="card-tags"><span class="tag tag-retrieval">Retrieval</span></div>
+      <span class="card-venue">2024</span>
+    </div>
+    <a class="card-link" href="https://arxiv.org/abs/2410.13080" target="_blank">Graph-constrained Reasoning: Faithful Reasoning on Knowledge Graphs with LLMs</a>
+    <div class="card-meta">arXiv:2410.13080</div>
+    <div class="card-desc">Constrains LLM decoding to valid KG paths via trie-based token constraints, eliminating hallucinated graph traversals.</div>
+  </div>
+
+  <!-- ── INTEGRATION ── -->
+  <div class="card" data-tags="integration">
+    <div class="card-header">
+      <div class="card-tags"><span class="tag tag-integration">Integration</span></div>
+      <span class="card-venue">NeurIPS 2024</span>
+    </div>
+    <a class="card-link" href="https://arxiv.org/abs/2410.23875" target="_blank">Plan-on-Graph: Self-Correcting Adaptive Planning of LLMs on Knowledge Graphs</a>
+    <div class="card-meta">arXiv:2410.23875</div>
+    <div class="card-desc">Self-correcting planning framework where LLMs iteratively revise their KG traversal plan based on retrieved evidence.</div>
+  </div>
+
+  <div class="card" data-tags="integration">
+    <div class="card-header">
+      <div class="card-tags"><span class="tag tag-integration">Integration</span></div>
+      <span class="card-venue">NeurIPS 2024</span>
+    </div>
+    <a class="card-link" href="https://arxiv.org/abs/2312.04815" target="_blank">KnowGPT: Knowledge Graph based PrompTing for Large Language Models</a>
+    <div class="card-meta">NeurIPS 2024</div>
+    <div class="card-desc">Injects structured KG triples into LLM prompts dynamically, improving factual grounding without fine-tuning.</div>
+  </div>
+
+  <div class="card" data-tags="integration">
+    <div class="card-header">
+      <div class="card-tags"><span class="tag tag-integration">Integration</span></div>
+      <span class="card-venue">ICLR 2024</span>
+    </div>
+    <a class="card-link" href="https://arxiv.org/abs/2305.04757" target="_blank">Reasoning on Graphs: Faithful and Interpretable LLM Reasoning</a>
+    <div class="card-meta">ICLR 2024</div>
+    <div class="card-desc">Framework for faithful multi-hop reasoning by grounding LLM inference steps explicitly on KG subgraph paths.</div>
+  </div>
+
+  <div class="card" data-tags="integration">
+    <div class="card-header">
+      <div class="card-tags"><span class="tag tag-integration">Integration</span></div>
+      <span class="card-venue">ACL 2024</span>
+    </div>
+    <a class="card-link" href="https://arxiv.org/abs/2404.07103" target="_blank">Graph Chain-of-Thought: Augmenting Large Language Models by Reasoning on Graphs</a>
+    <div class="card-meta">arXiv:2404.07103</div>
+    <div class="card-desc">Introduces graph-CoT where LLMs explicitly trace reasoning chains over KG nodes, improving interpretability and accuracy.</div>
+  </div>
+
+  <div class="card" data-tags="integration">
+    <div class="card-header">
+      <div class="card-tags"><span class="tag tag-integration">Integration</span></div>
+      <span class="card-venue">ACL 2024</span>
+    </div>
+    <a class="card-link" href="https://arxiv.org/abs/2311.13314" target="_blank">Mitigating LLM Hallucinations via Autonomous KG-based Retrofitting</a>
+    <div class="card-meta">arXiv:2311.13314</div>
+    <div class="card-desc">Post-generation retrofitting that autonomously identifies and corrects LLM hallucinations using KG triple verification.</div>
+  </div>
+
+  <!-- ── MEDICAL ── -->
+  <div class="card" data-tags="medical">
+    <div class="card-header">
+      <div class="card-tags"><span class="tag tag-medical">Medical</span></div>
+      <span class="card-venue">CVPR 2025</span>
+    </div>
+    <a class="card-link" href="https://arxiv.org/abs/2408.04187" target="_blank">Medical Graph RAG: Towards Safe Medical LLM via Graph Retrieval-Augmented Generation</a>
+    <div class="card-meta">arXiv:2408.04187</div>
+    <div class="card-desc">Builds patient-specific medical KGs for safe, grounded clinical reasoning, reducing hallucination in high-stakes settings.</div>
+  </div>
+
+  <div class="card" data-tags="medical">
+    <div class="card-header">
+      <div class="card-tags"><span class="tag tag-medical">Medical</span></div>
+      <span class="card-venue">2025</span>
+    </div>
+    <a class="card-link" href="https://arxiv.org/abs/2502.04413" target="_blank">MedRAG: Enhancing RAG with KG-Elicited Reasoning for Healthcare Copilot</a>
+    <div class="card-meta">arXiv:2502.04413</div>
+    <div class="card-desc">Healthcare copilot that elicits structured medical KG reasoning to answer complex clinical questions with citations.</div>
+  </div>
+
+  <!-- ── CODE ── -->
+  <div class="card" data-tags="code">
+    <div class="card-header">
+      <div class="card-tags"><span class="tag tag-code">Code</span></div>
+      <span class="card-venue">2024</span>
+    </div>
+    <a class="card-link" href="https://arxiv.org/abs/2406.07003" target="_blank">GraphCoder: Enhancing Repo-Level Code Completion via Code Context Graph-based Retrieval</a>
+    <div class="card-meta">arXiv:2406.07003</div>
+    <div class="card-desc">Builds a code context graph over repositories and uses graph retrieval to provide precise context for LLM-based code completion.</div>
+  </div>
+
+  <div class="card" data-tags="code">
+    <div class="card-header">
+      <div class="card-tags"><span class="tag tag-code">Code</span></div>
+      <span class="card-venue">2024</span>
+    </div>
+    <a class="card-link" href="https://arxiv.org/abs/2408.03910" target="_blank">CodexGraph: Bridging LLMs and Code Repositories via Code Graph Databases</a>
+    <div class="card-meta">arXiv:2408.03910</div>
+    <div class="card-desc">Uses graph databases to model code structure, enabling LLMs to perform precise, structure-aware repository-level code tasks.</div>
+  </div>
+
+</div>
+
+<div class="no-results" id="no-results">No papers found matching your search.</div>
+
+<footer>
+  Source: <a href="https://github.com/DEEP-PolyU/Awesome-GraphRAG" target="_blank">DEEP-PolyU/Awesome-GraphRAG</a> &middot;
+  <a href="https://github.com/bhaskarjitsarmah/awesome-ai-hub" target="_blank">View on GitHub</a>
+</footer>
+
+<script>
+  let activeFilter = 'all';
+
+  function setFilter(tag, btn) {
+    activeFilter = tag;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    applyFilters();
+  }
+
+  function applyFilters() {
+    const query = document.getElementById('search').value.toLowerCase();
+    let visible = 0;
+    document.querySelectorAll('.card').forEach(card => {
+      const tags = card.getAttribute('data-tags');
+      const text = card.innerText.toLowerCase();
+      const tagMatch = activeFilter === 'all' || tags.includes(activeFilter);
+      const textMatch = text.includes(query);
+      const show = tagMatch && textMatch;
+      card.style.display = show ? 'block' : 'none';
+      if (show) visible++;
+    });
+    document.getElementById('visible-count').textContent = visible;
+    document.getElementById('no-results').style.display = visible === 0 ? 'block' : 'none';
+  }
+</script>
+
+</body>
+</html>
